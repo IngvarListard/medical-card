@@ -45,7 +45,9 @@ CREATE TABLE events (
     event_type_id INT,
 	created_at DATETIME DEFAULT (datetime('now')) NOT NULL,
 	updated_at DATETIME DEFAULT (datetime('now')) NOT NULL,
-	FOREIGN KEY (event_type_id) REFERENCES event_types(id)
+    parent_id INT,
+	FOREIGN KEY (event_type_id) REFERENCES event_types(id),
+	FOREIGN KEY (parent_id) REFERENCES events(id)
 );
 --;;
 
@@ -84,5 +86,25 @@ CREATE TABLE doctors_to_specializations (
 	PRIMARY KEY (doctor_id, specialization_id),
 	FOREIGN KEY (doctor_id) REFERENCES doctors(id),
 	FOREIGN KEY (specialization_id) REFERENCES specializations(id)
+);
+--;;
+
+CREATE TABLE research_types (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    display_name TEXT NOT NULL
+);
+--;;
+
+CREATE TABLE researches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    description TEXT,
+    start_date DATETIME,
+    "type" INT,
+    finish_date DATETIME,
+	created_at DATETIME DEFAULT (datetime('now')) NOT NULL,
+	updated_at DATETIME DEFAULT (datetime('now')) NOT NULL,
+	FOREIGN KEY ("type") REFERENCES research_types(id)
 );
 --;;

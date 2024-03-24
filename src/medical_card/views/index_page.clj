@@ -1,4 +1,4 @@
-(ns medical-card.views.index
+(ns medical-card.views.index-page
   (:require [medical-card.db.queries :refer [get-documents]]
             [medical-card.ui.core :refer [page]]
             [medical-card.ui.medical-history :refer [history-table]]))

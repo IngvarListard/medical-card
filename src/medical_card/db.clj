@@ -1,5 +1,4 @@
-(ns medical-card.db
-  (:require [next.jdbc :as jdbc]))
+(ns medical-card.db)
 
 
 (def db

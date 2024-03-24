@@ -14,7 +14,8 @@
                  [org.xerial/sqlite-jdbc "3.43.0.0"]
                  [migratus "1.5.5"]
                  [com.fzakaria/slf4j-timbre "0.4.1"]
-                 [com.github.seancorfield/honeysql "2.6.1126"]]
+                 [com.github.seancorfield/honeysql "2.6.1126"]
+                 [cheshire "5.12.0"]]
   :plugins [[lein-ring "0.12.6"]
             [migratus-lein "0.7.3"]]
   :ring {:auto-reload? true

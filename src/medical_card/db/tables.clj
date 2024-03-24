@@ -1,15 +1,15 @@
-(ns medical-card.db.tables)
-
-(defmacro defs
-  [bindings]
-  {:pre [(even? (count bindings))]}
-  `(do
-     ~@(for [[sym init] (partition 2 bindings)]
-         `(def ~sym ~init))))
+(ns medical-card.db.tables
+  (:require [medical-card.common :refer [defs]]))
 
 (defs
   [documents :documents
-   users :users
    doctors :doctors
+   users :users
    organizations :organizations
-   events :events])
+   specializations :specializations
+   events :events
+   event_types :event_types
+   doctors_to_organizations :doctors_to_organizations
+   doctors_to_specializations :doctors_to_specializations
+   research_types :research_types
+   researches :researches])
