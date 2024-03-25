@@ -1,28 +1,31 @@
 (ns medical-card.ui.forms.research
   (:require [rum.core :as r]
-            [medical-card.ui.create-event-dialog :refer [formm]]))
+            [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]))
 
 
-(r/defc research-form []
-  (formm
-   [:div
-    [:div {:class "row mb-3"}
-     [:label {:for "research-name", :class "col-sm-2 col-form-label"} "Название"]
-     [:div
-      {:class "col-sm-10"}
-      [:input
-       {:id "research-name"
-        :name "research-name"
-        :type "text"
+(defn research-form
+  ([] (research-form nil))
+  ([val]
+   (create-record-selector-form
+    [:div
+     [:div {:class "row mb-3"}
+      [:label {:for "research-name", :class "col-sm-2 col-form-label"} "Название"]
+      [:div
+       {:class "col-sm-10"}
+       [:input
+        {:id "research-name"
+         :name "research-name"
+         :type "text"
      ;;:class "form-control-plaintext"
-        :value ""}]]]
-    [:div {:class "row mb-3"}
-     [:label {:for "research-desc", :class "col-sm-2 col-form-label"} "Описание"]
-     [:div
-      {:class "col-sm-10"}
-      [:input
-       {:id "research-desc"
-        :name "research-desc"
-        :type "text"
+         :value ""}]]]
+     [:div {:class "row mb-3"}
+      [:label {:for "research-desc", :class "col-sm-2 col-form-label"} "Описание"]
+      [:div
+       {:class "col-sm-10"}
+       [:input
+        {:id "research-desc"
+         :name "research-desc"
+         :type "text"
      ;;:class "form-control-plaintext"
-        :value ""}]]]]))
+         :value ""}]]]]
+    :value val)))

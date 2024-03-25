@@ -29,39 +29,39 @@
 
 (defn selector
   "Селектор типов объектов для создания"
-  [items]
+  [items & {:keys [value] :as v}]
   [:div
-   [:label {:for (:selector-id ctx) :class "form-label"}
-    "Объект записи"]
+   {:hx-trigger "change"
+    :hx-get "/api/forms/create-event/object-form"
+    :hx-target (t-id :form-id)
+    :hx-swap "outerHTML"
+    :hx-include "[name='select-object']"}
    (into
     [:select
-     {:id (:selector-id ctx)
+     (merge
+      {:id (:selector-id ctx)
       :name (:select-object c/forms)
       :class "form-select"
-      :aria-label "Выберите тип записи"
-      ;; выполняем подзагрузку формы при открытии диалога
-      :hx-trigger "load-object-form from:body"
-      :hx-get "/api/forms/create-event/object-form"
-      ;; передаем параметр выбранный в селекторе при подгрузке формы
-      :hx-include "[name='select-object']"}]
+      :aria-label "Выберите тип записи"}
+      (when value v))]
     (map (fn [i] [:option {:value (:name i)} (:display-name i)]) items))])
 
 
-(r/defc formm
-  ([] (formm ""))
-  ([form-content]
-   [:form {:hx-post "/api/create-event"}
-    [:div {:class "input-group"}
-     (selector object-types)
-     form-content
-     [:div {:class "modal-footer"}
-      [:button
-       {:type "button",
-        :class "btn btn-secondary",
-        :data-bs-dismiss "modal"}
-       "Close"]
-      [:button {:type "submit", :class "btn btn-primary"}
-       "Save changes"]]]]))
+(r/defc create-record-selector-form
+  "Форма с селектором выбора типа объекта для создания"
+  ([] (create-record-selector-form ""))
+  ([form-content & {:keys [value] :as v}]
+   [:form {:hx-post "/api/create-event" :id (:form-id ctx)}
+    (selector object-types v)
+    form-content
+    [:div {:class "modal-footer"}
+     [:button
+      {:type "button",
+       :class "btn btn-secondary",
+       :data-bs-dismiss "modal"}
+      "Close"]
+     [:button {:type "submit", :class "btn btn-primary"}
+      "Save changes"]]]))
 
 
 (defn dialog

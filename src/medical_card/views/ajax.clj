@@ -6,7 +6,7 @@
 
 
 (defn get-create-event-view []
-  (-> (f/formm)
+  (-> (research-form)
       rum/render-html
       r/response
       (r/header "HX-Trigger-After-Settle" "load-object-form")))
@@ -15,7 +15,9 @@
 (defn get-record-form-view
   [object-for]
   ;; TODO: когда-нибудь здесь будет мультиметод
-  (case object-for
-    ;; вместо строки вставить откуда-нибудь из констант
-    "research" (rum/render-html (research-form))
-    (throw (Exception. "Неизвестная форма"))))
+  ;; (case object-for
+  ;;   ;; вместо строки вставить откуда-нибудь из констант
+  ;;   "research" (rum/render-html (research-form))
+  ;;   "unknown")
+  (println "object for" object-for)
+  (rum/render-html (research-form object-for)))
