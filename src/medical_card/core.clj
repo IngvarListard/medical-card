@@ -16,13 +16,13 @@
 (c/defroutes app-routes
   (c/GET "/" [] (r/response (rum/render-html (medical-history-view))))
   (c/GET "/api/forms/create-event" [] (ajax-views/get-create-event-view))
-  (c/GET "/api/forms/create-event/object-form" {form :query-string} (fn [& _] (-> form
-                                                                               form-decode
-                                                                               keywordize-keys
-                                                                               :select-object
-                                                                               ajax-views/get-record-form-view)))  ;; TODO: заменить research на аргумент запроса
-  (c/POST "/api/create-event" [] (fn [& all] (println all) (r/response "wqerwqer")))
-  ;; (c/POST "/clicked" [] (response (r/render-html (dialog))))
+  (c/GET "/api/forms/create-event/object-form"
+    {form-params :query-string}
+    (fn [& _] (-> form-params
+                  form-decode
+                  keywordize-keys
+                  :select-object
+                  ajax-views/get-record-form-view)))
   (route/resources "/")
   (route/not-found "Not Found"))
 

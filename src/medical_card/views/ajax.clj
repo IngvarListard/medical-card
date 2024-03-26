@@ -1,7 +1,6 @@
 (ns medical-card.views.ajax
   (:require [rum.core :as rum]
             [ring.util.response :as r]
-            [medical-card.ui.create-event-dialog :as f]
             [medical-card.ui.forms.research :refer [research-form]]))
 
 
@@ -19,5 +18,4 @@
   ;;   ;; вместо строки вставить откуда-нибудь из констант
   ;;   "research" (rum/render-html (research-form))
   ;;   "unknown")
-  (println "object for" object-for)
   (rum/render-html (research-form object-for)))

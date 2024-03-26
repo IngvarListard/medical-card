@@ -50,7 +50,7 @@
 (r/defc create-record-selector-form
   "Форма с селектором выбора типа объекта для создания"
   ([] (create-record-selector-form ""))
-  ([form-content & {:keys [value] :as v}]
+  ([form-content & {:keys [_] :as v}]
    [:form {:hx-post "/api/create-event" :id (:form-id ctx)}
     (selector object-types v)
     form-content
@@ -84,13 +84,6 @@
          :class "btn-close",
          :data-bs-dismiss "modal",
          :aria-label "Close"}]]]]]])
-
-
-;; (defn new-event-form
-;;   [submit-btn]
-;;   [:form {:hx-post "/api/create-event"}
-;;    (selector object-types)
-;;    submit-btn])
 
 
 (defn new-event-dialog []
