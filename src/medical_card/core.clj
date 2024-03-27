@@ -16,6 +16,7 @@
 (c/defroutes app-routes
   (c/GET "/" [] (r/response (rum/render-html (medical-history-view))))
   (c/GET "/api/forms/create-event" [] (ajax-views/get-create-event-view))
+  (c/POST "/api/forms/create-event" [] (ajax-views/get-create-event-view))
   (c/GET "/api/forms/create-event/object-form"
     {form-params :query-string}
     (fn [& _] (-> form-params
