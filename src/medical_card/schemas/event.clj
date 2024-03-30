@@ -1,14 +1,16 @@
 (ns medical-card.schemas.event
   (:require [malli.core :as m]
-            [malli.generator :as mg]
-            [cheshire.core :refer [generate-string parse-string]]
-            [malli.transform :as mt]
-            [malli.experimental.time :as met]
+            [malli.util :as mu]
             [malli.registry :as mr]
+            [malli.experimental.time :as met]
             [malli.experimental.time.generator]
-            [java-time :as t]
-            [malli.json-schema :as json-schema]
-            [malli.experimental.time.transform :as mett]))
+            ;; [malli.generator :as mg]
+            ;; [cheshire.core :refer [generate-string parse-string]]
+            ;; [malli.transform :as mt]
+            ;; [java-time :as t]
+            ;; [malli.json-schema :as json-schema]
+            ;; [malli.experimental.time.transform :as mett]
+            ))
 
 
 ;; подключение экспериментальных схем дат
@@ -18,32 +20,28 @@
   (met/schemas)))
 
 
-(def User [])
+(def Research
+  [:map {:display-name "Исследование"}
+   [:name [:string {:min 10 :max 200 :display-name "Имя"}]]
+   [:description [:string {:min 0 :max 2000 :display-name "Описание"}]]
+   [:type
+    [:enum
+     {:display-name "Тип исследования"}
+     "routine_health_check"
+     "unscheduled_health_check"
+     "disease"
+     "other"]]
+   [:start_date [inst? {:display-name "Дата"}]]])
 
 ;; routine_health_check - плановая проверка
 ;; unscheduled_health_check - внеплановая проверка
 ;; disease - недуг
 ;; other
-(def Research
-  [:map
-   [:name [string? {:min 10 :max 200}]]
-   [:description [string? {:min 0 :max 2000}]]
-   [:start_date [:maybe inst?]]
-   [:type
-    [:enum
-     "routine_health_check"
-     "unscheduled_health_check"
-     "disease"
-     "other"]]
-   [:start_date [:maybe inst?]]])
 
-
-(def EventType [])
-
-
-;; doctor_visit - прием врача
-;; taking_tests - сдача анализов
 (def Event
+  "Событие
+    doctor_visit - прием врача
+    taking_tests - сдача анализов"
   [:map
    [:type
     [:enum
@@ -55,9 +53,6 @@
    [:parent_id {:optional true} [:maybe int?]]
    [:research_id {:optional true} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
-
-
-(def EventType [])
 
 
 (def Document
@@ -72,41 +67,76 @@
    [:report_date [:maybe inst?]]])
 
 
-(def Doctor [])
+(defn get-top-level-subschemas
+  "Получить вложенные первого уровня из базовой схемы
+   
+   Example:
+    (get-top-level-subschemas Research [:name])
+   "
+  ([schema] (get-top-level-subschemas schema nil))
+  ([schema fields]
+   (let [fields (mu/keys (if fields
+                           (mu/select-keys schema fields)
+                           schema))
+         fields-schemas (map (fn [k] [k (m/form (mu/get schema k))]) fields)]
+     fields-schemas)))
 
 
-(def Specialization [])
+(defn schema-entry-to-form-params
+  "Подготовка данных из Malli's Entry в удобный для работы словарь
+   
+   Examples:
+    (schema-entry-to-form-params [:name [:string {:min 10, :max 200, :display-name \"Имя\"}]])
+    (schema-entry-to-form-params (nth (get-top-level-subschemas Research [:name]) 0))
+   "
+  [schema-entry]
+  (let [[name & [schema]] schema-entry
+        props (m/properties schema)
+        child (m/children schema)]
+    {:name name
+     :type (first schema)
+     :display-name (:display-name props)
+     :allowed-values child}))
 
 
-(def Organization [])
+(defn walk-properties
+  "С помощью этой функции можно получить доступ к свойствам полей в :map"
+  [schema f]
+  (m/walk
+   schema
+   (fn [s _ c _]
+     (m/into-schema
+      (m/-parent s)
+      (f (m/-properties s))
+      (cond->> c (m/entries s) (map (fn [[k p s]] [k (f p) (first (m/children s))])))
+      (m/options s)))
+   {::m/walk-entry-vals true}))
 
-
-(def DoctorToSpecialization [])
-
-
-(def DoctorToOrganization [])
-
+;; later
+(comment
+  (def EventType [])
+  (def EventType [])
+  (def Doctor [])
+  (def Specialization [])
+  (def Organization [])
+  (def DoctorToSpecialization [])
+  (def User [])
+  (def DoctorToOrganization [])
+  :rcf)
 
 (comment
-  (m/decode [:time/local-date {:pattern "yyyyMMdd"}] "20200101" (mett/time-transformer))
-  (m/decoder [:time/local-date] (mett/time-transformer))
-
-  (m/decode
-   [:string {:decode {:string clojure.string/upper-case}}]
-   "kerran" mt/string-transformer)
-
-  (m/coerce (m/schema Event) {:type "doctor_visit" :name "qwre12341234qer" :description ""}
-            mt/json-transformer)
-
-  (m/coerce (m/schema Research) {:name "qwerqwer1234123412340w"
-                                 :description ""
-                                 :start_date "2022-03-08"
-                                 :finish_date "2022-03-08"
-                                 :type "disease"}
-            mt/json-transformer)
-
-
-  (m/schema? (m/schema Research))
-  (t/format (:start_date (mg/generate (m/schema Research))))
-
+  (m/properties [:string {:min 10, :max 200, :display-name "Имя"}])
+  (key {:a 1})
+  (get-top-level-subschemas Research)
+  (mu/select-keys Research nil)
+  (let [[x & _] (m/-children (mu/get Research :type))]
+    _)
+  (walk-properties Research (fn [p] (println p) p))
+  (m/walk Research (m/schema-walker (fn [s] (println s) s)))
+  (m/-properties (m/schema Research))
+  (m/-properties (m/schema [:name [:string {:optional true}]]))
+  (m/properties [:map [:name {:display-name "asdf"} [:string {:optional true}]]])
+  (m/-properties (m/schema (last Research)))
+  (m/schema? (m/schema [:name {:display-name "asdf"} [:string {:optional true}]]))
+  (m/properties (mu/get (m/schema Research) :type))
   :rcf)
