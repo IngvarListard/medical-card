@@ -7,15 +7,16 @@
 (defn get-create-event-view []
   (-> (research-form)
       rum/render-html
-      r/response
-      (r/header "HX-Trigger-After-Settle" "load-object-form")))
+      r/response))
 
 
 (defn get-record-form-view
   [object-for]
-  (rum/render-html (research-form object-for)))
+  (-> object-for
+      research-form
+      rum/render-html
+      r/response))
 
 
-(defn create-event 
-  [form]
-  )
+(defn create-event
+  [form])

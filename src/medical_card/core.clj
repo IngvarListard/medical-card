@@ -36,23 +36,25 @@
   (run-jetty app-routes {:port 3000
                          :join? false}))
 
-(defonce server (run-jetty
-                 (-> #'app-routes
-                     wrap-reload
-                     wrap-json-response
-                     wrap-params)
-                 {:port 3000 :join? false}))
+(defonce server
+  (run-jetty
+   (-> #'app-routes
+       wrap-reload
+       wrap-json-response
+       wrap-params)
+   {:port 3000 :join? false}))
 
 (comment
   (require 'kaocha.watch
            'kaocha.repl)
   (kaocha.watch/run (kaocha.repl/config))
-  (def server (run-jetty
-               (-> #'app-routes
-                   wrap-reload
-                   wrap-json-response
-                   wrap-params)
-               {:port 3000 :join? false}))
+  (def server
+    (run-jetty
+     (-> #'app-routes
+         wrap-reload
+         wrap-json-response
+         wrap-params)
+     {:port 3000 :join? false}))
 
   (rum/render-html (medical-history-view))
   :rcf)

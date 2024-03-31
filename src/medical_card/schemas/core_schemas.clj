@@ -48,26 +48,27 @@
     taking_tests - сдача анализов"
   [:map
    [:type
+    {:display-name "Тип исследования"}
     [:enum
      "doctor_visit"
      "taking_tests"]]
-   [:name [string? {:min 5 :max 200}]]
-   [:description [string? {:min 0 :max 2000}]]
-   [:event_type_id {:optional true} [:maybe int?]]
-   [:parent_id {:optional true} [:maybe int?]]
-   [:research_id {:optional true} [:maybe int?]]
+   [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
+   [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
+   [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
+   [:parent_id {:optional true :display-name "Предшествующее событие"} [:maybe int?]]
+   [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
 
 
 (def Document
   [:map
-   [:name [string? {:min 5 :max 200}]]
-   [:path [string? {:min 5 :max 200 :optional true}]]
-   [:type [string? {:min 5 :max 200 :optional true}]]
-   [:document [string? {:optional true}]]
-   [:user_id [int?]]
-   [:event_id [int? {:optional true}]]
-   [:doctor_id [int? {:optional true}]]
+   [:name {:display-name "Название документа"} [:string {:min 5 :max 200}]]
+   [:path {:display-name "Путь к файлу"} [:string {:min 5 :max 200 :optional true}]]
+   [:type {:display-name "Тип"} [:string {:min 5 :max 200}]]
+   [:document {:display-name "Документ" :optional true} [:string]]
+   [:user_id {:display-name "Пользователь" :optional true} [:int]]
+   [:event_id {:display-name "Событие" :optional true} [:int]]
+   [:doctor_id {:display-name "Врач" :optional true} [:int]]
    [:report_date [:maybe inst?]]])
 
 
@@ -82,7 +83,6 @@
 
 (defn schema-entry->form-params
   [entry]
-  (print (type entry))
   (let [[entry-name opts schema] entry
         ch (m/children schema)]
     {:name (name entry-name)

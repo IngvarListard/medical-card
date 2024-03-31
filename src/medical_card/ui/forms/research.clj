@@ -1,7 +1,7 @@
 (ns medical-card.ui.forms.research
   (:require [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
-            [medical-card.schemas.core-schemas :refer [Research entry-schema->form-params get-top-level-entries]]
-            [medical-card.schemas.form-schemas :refer [ResearchFormSchema]]
+            [medical-card.schemas.core-schemas :refer [Research schema-entry->form-params get-top-level-entries]]
+            [medical-card.schemas.form-schemas :refer [ResearchFormSchema EventFormSchema DocumentFormSchema]]
             ;; [medical-card.constants :as const]
             ;; [rum.core :as r]
             ))
@@ -11,7 +11,9 @@
   {:string "text"})
 
 (def form-to-schema
-  {:research ResearchFormSchema})
+  {:research ResearchFormSchema
+   :event EventFormSchema
+   :document DocumentFormSchema})
 
 (comment
   (= Research (:research form-to-schema))
@@ -195,8 +197,8 @@
    (let [schemas-col (as-> val $
                        (keyword $)
                        (get form-to-schema $)
-                       (get-top-level-entries $ [:name :description :type :start_date])
-                       (map entry-schema->form-params $))]
+                       (get-top-level-entries $)
+                       (map schema-entry->form-params $))]
      (-> schemas-col
          inputs-from-schema
          (create-record-selector-form :value val)))))
