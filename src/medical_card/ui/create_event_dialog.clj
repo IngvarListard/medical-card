@@ -51,7 +51,7 @@
   "Форма с селектором выбора типа объекта для создания"
   ([] (create-record-selector-form ""))
   ([form-content & {:keys [_] :as v}]
-   [:form {:hx-post "/api/create-event" :id (:form-id ctx)}
+   [:form {:hx-post "/api/forms/create-event" :id (:form-id ctx)}
     (selector object-types v)
     form-content
     [:div {:class "modal-footer"}

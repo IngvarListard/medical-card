@@ -17,7 +17,8 @@
                  [com.github.seancorfield/honeysql "2.6.1126"]
                  [cheshire "5.12.0"]
                  [metosin/malli "0.15.0"]
-                 [clojure.java-time "1.4.2"]]
+                 [clojure.java-time "1.4.2"]
+                 [lambdaisland/kaocha "1.88.1376"]]
   :plugins [[lein-ring "0.12.6"]
             [migratus-lein "0.7.3"]]
   :ring {:auto-reload? true
@@ -26,7 +27,10 @@
          :reload-paths ["src/" "resources/"]}
   :main ^:skip-aot medical-card.core
   :target-path "target/%s"
-  :source-paths ["src"],
+  :source-paths ["src"]
+  :test-paths ["test"]
+  :aliases {"test" ["run" "-m" "kaocha.runner"]
+            :dev {:extra-paths ["test"]}}
   :migratus {:store :database
              :migration-dir "migrations"
              :db {:dbtype "sqlite"

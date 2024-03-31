@@ -4,9 +4,10 @@
             [malli.registry :as mr]
             [malli.experimental.time :as met]
             [malli.experimental.time.generator]
+            [clojure.string :refer [blank?]]
             ;; [malli.generator :as mg]
             ;; [cheshire.core :refer [generate-string parse-string]]
-            ;; [malli.transform :as mt]
+            [malli.transform :as mt]
             ;; [java-time :as t]
             ;; [malli.json-schema :as json-schema]
             ;; [malli.experimental.time.transform :as mett]
@@ -31,7 +32,10 @@
      "unscheduled_health_check"
      "disease"
      "other"]]
-   [:start_date [inst? {:display-name "Дата"}]]])
+   [:start_date {:optional true :display-name "дата"}
+    [:multi {:dispatch :type}
+     [:maybe [inst? {:display-name "Дата"}]]
+     [::m/default [:maybe :string]]]]])
 
 ;; routine_health_check - плановая проверка
 ;; unscheduled_health_check - внеплановая проверка
@@ -81,6 +85,10 @@
          fields-schemas (map (fn [k] [k (m/form (mu/get schema k))]) fields)]
      fields-schemas)))
 
+(comment
+
+  (get-top-level-subschemas Research [:start_date])
+  :rcf)
 
 (defn schema-entry-to-form-params
   "Подготовка данных из Malli's Entry в удобный для работы словарь
@@ -112,19 +120,27 @@
       (m/options s)))
    {::m/walk-entry-vals true}))
 
-;; later
-(comment
-  (def EventType [])
-  (def EventType [])
-  (def Doctor [])
-  (def Specialization [])
-  (def Organization [])
-  (def DoctorToSpecialization [])
-  (def User [])
-  (def DoctorToOrganization [])
-  :rcf)
+
+(defn nullify-str []
+  (mt/transformer
+   {:decoders
+    {:string
+     {:compile (fn [_ _]
+                 (fn [x]
+                   (if (and (string? x) (blank? x)) nil x)))}}}))
+
+(def submit-form-transformer
+  (mt/transformer
+   nullify-str
+   mt/json-transformer))
+
 
 (comment
+  (m/coerce [:map
+             [:d {:optional true} [:multi {:dispatch :type}
+                                   [:maybe inst?]
+                                   [::m/default [:maybe :string]]]]] {:d ""}
+            submit-form-transformer)
   (m/properties [:string {:min 10, :max 200, :display-name "Имя"}])
   (key {:a 1})
   (get-top-level-subschemas Research)
@@ -139,4 +155,16 @@
   (m/-properties (m/schema (last Research)))
   (m/schema? (m/schema [:name {:display-name "asdf"} [:string {:optional true}]]))
   (m/properties (mu/get (m/schema Research) :type))
+  :rcf)
+
+;;later
+(comment
+  (def EventType [])
+  (def EventType [])
+  (def Doctor [])
+  (def Specialization [])
+  (def Organization [])
+  (def DoctorToSpecialization [])
+  (def User [])
+  (def DoctorToOrganization [])
   :rcf)
