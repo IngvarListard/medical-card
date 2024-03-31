@@ -1,4 +1,4 @@
-(ns medical-card.utils)
+(ns medical-card.test.utils)
 
 
 (defn not-thrown?

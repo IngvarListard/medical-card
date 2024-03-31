@@ -1,15 +1,17 @@
 (ns medical-card.ui.forms.research
-  (:require [rum.core :as r]
-            [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
-            [medical-card.constants :as const]
-            [medical-card.schemas.event :refer [Research get-top-level-subschemas schema-entry-to-form-params]]))
+  (:require [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
+            [medical-card.schemas.core-schemas :refer [Research entry-schema->form-params get-top-level-entries]]
+            [medical-card.schemas.form-schemas :refer [ResearchFormSchema]]
+            ;; [medical-card.constants :as const]
+            ;; [rum.core :as r]
+            ))
 
 
 (def ^:const input-types
   {:string "text"})
 
 (def form-to-schema
-  {:research Research})
+  {:research ResearchFormSchema})
 
 (comment
   (= Research (:research form-to-schema))
@@ -193,16 +195,14 @@
    (let [schemas-col (as-> val $
                        (keyword $)
                        (get form-to-schema $)
-                       (get-top-level-subschemas $ [:name :description :type :start_date])
-                       (map schema-entry-to-form-params $))]
+                       (get-top-level-entries $ [:name :description :type :start_date])
+                       (map entry-schema->form-params $))]
      (-> schemas-col
          inputs-from-schema
          (create-record-selector-form :value val)))))
 
 
 (comment
-  ;; (schema-entry-to-form-params (get-top-level-subschemas Research))
-  (map schema-entry-to-form-params (get-top-level-subschemas Research [:name]))
   (inputs-from-schema [{:name "testname" :type :string :display-name "Поле!"}])
   (research-form)
   :rcf)

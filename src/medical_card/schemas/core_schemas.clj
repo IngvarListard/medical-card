@@ -1,13 +1,13 @@
-(ns medical-card.schemas.event
-  (:require [malli.core :as m]
+(ns medical-card.schemas.core-schemas
+  (:require [clojure.string :refer [blank?]]
+            [malli.core :as m]
             [malli.util :as mu]
             [malli.registry :as mr]
             [malli.experimental.time :as met]
             [malli.experimental.time.generator]
-            [clojure.string :refer [blank?]]
+            [malli.transform :as mt]
             ;; [malli.generator :as mg]
             ;; [cheshire.core :refer [generate-string parse-string]]
-            [malli.transform :as mt]
             ;; [java-time :as t]
             ;; [malli.json-schema :as json-schema]
             ;; [malli.experimental.time.transform :as mett]
@@ -23,18 +23,18 @@
 
 (def Research
   [:map {:display-name "Исследование"}
-   [:name [:string {:min 10 :max 200 :display-name "Имя"}]]
-   [:description [:string {:min 0 :max 2000 :display-name "Описание"}]]
+   [:name {:display-name "Имя"} [:string {:min 10 :max 200}]]
+   [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
    [:type
+    {:display-name "Тип исследования"}
     [:enum
-     {:display-name "Тип исследования"}
      "routine_health_check"
      "unscheduled_health_check"
      "disease"
      "other"]]
-   [:start_date {:optional true :display-name "дата"}
+   [:start_date {:optional true :display-name "Дата начала"}
     [:multi {:dispatch :type}
-     [:maybe [inst? {:display-name "Дата"}]]
+     [:maybe [inst?]]
      [::m/default [:maybe :string]]]]])
 
 ;; routine_health_check - плановая проверка
@@ -71,40 +71,45 @@
    [:report_date [:maybe inst?]]])
 
 
-(defn get-top-level-subschemas
-  "Получить вложенные первого уровня из базовой схемы
-   
-   Example:
-    (get-top-level-subschemas Research [:name])
-   "
-  ([schema] (get-top-level-subschemas schema nil))
+(defn get-top-level-entries
+  ([schema] (get-top-level-entries schema nil))
   ([schema fields]
-   (let [fields (mu/keys (if fields
-                           (mu/select-keys schema fields)
-                           schema))
-         fields-schemas (map (fn [k] [k (m/form (mu/get schema k))]) fields)]
-     fields-schemas)))
+   (let [schema* (if fields (mu/select-keys schema fields) schema)]
+     (map (fn [[k s]]
+            [k (m/properties s) (m/form (mu/get schema k))])
+          (m/entries schema*)))))
+
+
+(defn schema-entry->form-params
+  [entry]
+  (print (type entry))
+  (let [[entry-name opts schema] entry
+        ch (m/children schema)]
+    {:name (name entry-name)
+     :type (cond (coll? schema) (first schema) :else schema)
+     :display-name (:display-name opts)
+     :allowed-values ch}))
+
 
 (comment
+  (type (nth (get-top-level-entries Research) 0))
 
-  (get-top-level-subschemas Research [:start_date])
+  (schema-entry->form-params (nth (get-top-level-entries Research) 0))
+
+
+  (map schema-entry->form-params (vec (get-top-level-entries Research)))
+  (schema-entry->form-params [:name {:display-name "Имя"} [:string {:min 10, :max 200}]])
+  (m/entries Research)
+  (get-top-level-entries Research [:name])
+  (m/properties Research {::m/walk-entry-vals true})
+  (mu/get Research :name)
+  (m/walk
+   Research
+   (fn [schema path children options]
+     (println schema path children options))
+   {::m/walk-entry-vals true})
+
   :rcf)
-
-(defn schema-entry-to-form-params
-  "Подготовка данных из Malli's Entry в удобный для работы словарь
-   
-   Examples:
-    (schema-entry-to-form-params [:name [:string {:min 10, :max 200, :display-name \"Имя\"}]])
-    (schema-entry-to-form-params (nth (get-top-level-subschemas Research [:name]) 0))
-   "
-  [schema-entry]
-  (let [[name & [schema]] schema-entry
-        props (m/properties schema)
-        child (m/children schema)]
-    {:name name
-     :type (first schema)
-     :display-name (:display-name props)
-     :allowed-values child}))
 
 
 (defn walk-properties
@@ -129,6 +134,7 @@
                  (fn [x]
                    (if (and (string? x) (blank? x)) nil x)))}}}))
 
+
 (def submit-form-transformer
   (mt/transformer
    nullify-str
@@ -136,14 +142,27 @@
 
 
 (comment
-  (m/coerce [:map
-             [:d {:optional true} [:multi {:dispatch :type}
-                                   [:maybe inst?]
-                                   [::m/default [:maybe :string]]]]] {:d ""}
+  (def a [:map
+          [:d {:optional true :display-name "date"} [:multi {:dispatch :type}
+                                                     [:maybe inst?]
+                                                     [::m/default [:maybe :string]]]]])
+  (mu/update-properties [:map
+                         [:name {:name "qwerqwer"} [:int]]]
+                        assoc :name 1)
+
+  (mu/merge
+   [:map
+    [:name {:optional true :name "shit"} [int?]]]
+   [:map
+    [:name {:name "foo"} [int?]]])
+  (m/walk a (fn [schema path children options]
+              (println schema path children options)
+              1))
+  (m/coerce a {:d ""}
             submit-form-transformer)
   (m/properties [:string {:min 10, :max 200, :display-name "Имя"}])
   (key {:a 1})
-  (get-top-level-subschemas Research)
+  (require '[clojure.pprint :refer [pprint]])
   (mu/select-keys Research nil)
   (let [[x & _] (m/-children (mu/get Research :type))]
     _)
@@ -157,6 +176,7 @@
   (m/properties (mu/get (m/schema Research) :type))
   :rcf)
 
+
 ;;later
 (comment
   (def EventType [])
@@ -168,3 +188,4 @@
   (def User [])
   (def DoctorToOrganization [])
   :rcf)
+

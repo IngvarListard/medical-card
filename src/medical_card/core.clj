@@ -44,7 +44,6 @@
                  {:port 3000 :join? false}))
 
 (comment
-  clojure.test/*load-tests*
   (require 'kaocha.watch
            'kaocha.repl)
   (kaocha.watch/run (kaocha.repl/config))

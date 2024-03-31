@@ -1,5 +1,5 @@
 (ns medical-card.views.create-event.submit
-  (:require [medical-card.schemas.event :refer [Research submit-form-transformer]]
+  (:require [medical-card.schemas.core-schemas :refer [Research submit-form-transformer]]
             [malli.core :as m]
             [malli.transform :as mt]
             [clojure.walk :refer [keywordize-keys]]

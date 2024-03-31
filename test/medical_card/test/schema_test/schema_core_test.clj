@@ -1,9 +1,9 @@
-(ns medical-card.schema-test.schema-core-test
+(ns medical-card.test.schema-test.schema-core-test
   (:require [clojure.test :refer :all]
             [medical-card.core :refer :all]
-            [medical-card.schemas.event :refer [Research]]
+            [medical-card.schemas.core-schemas :refer [Research]]
             [malli.core :as m]
-            [medical-card.utils :refer [not-thrown?]]))
+            [medical-card.test.utils :refer [not-thrown?]]))
 
 
 (deftest all-schemas-valid-test
