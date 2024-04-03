@@ -1,16 +1,16 @@
 (ns medical-card.views.create-event.submit
-  (:require [medical-card.schemas.core-schemas :refer [Research submit-form-transformer]]
-            [malli.core :as m]
-            [malli.transform :as mt]
-            [clojure.walk :refer [keywordize-keys]]
-            [clojure.pprint :refer [pprint]]))
+  (:require [clojure.pprint :refer [pprint]]
+            [clojure.walk :refer [keywordize-keys]]))
 
 
 (defn create-event
   [form-params]
   (pprint (as-> form-params $
-            (keywordize-keys $)
-            (m/coerce Research $ submit-form-transformer)))
+            (keywordize-keys $)))
+  ;; (pprint (as-> form-params $
+  ;;           (keywordize-keys $)
+  ;;           ((fn [params] (println params) params) $)
+  ;;           (m/coerce Research $ submit-form-transformer)))
 
   ;; (println (m/coerce Research (keywordize-keys form-params) mt/json-transformer))
   )
@@ -22,11 +22,12 @@
           "type" "unscheduled_health_check",
           "start_date" ""})
 
+  (def b
+    {;:select-object "research",
+     :name "qewrqwerwqer",
+     :description "qwerqwerqwer",
+     :type "routine_health_check",
+     :start_date "2024-04-01T20:41:11.877930"
+     })
 
-  (m/coerce [:map
-             [:start_date [inst?]]] {:start_date nil} submit-form-transformer)
-  (create-event a)
-  (as-> a $
-    (keywordize-keys $)
-    (m/explain Research $ submit-form-transformer))
   :rcf)

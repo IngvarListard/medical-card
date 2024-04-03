@@ -1,13 +1,17 @@
 (ns medical-card.schemas.form-schemas
   (:require [malli.core :as m]
             [malli.util :as mu]
-            [medical-card.schemas.core-schemas :refer [Research Event Document]]))
+            [medical-card.schemas.core-schemas :refer [Research Event Document]]
+            [clojure.instant :as instant]))
 
 (def ResearchFormSchema
   (mu/merge
    Research
    [:map
-    [:start_date {:optional true :display-name "Дата начала"} [:maybe :string]]]))
+    [:start_date {:optional true :display-name "Дата начала"}
+     [:multi {:dispatch :type :decode/before '#(update % :type keyword)}
+      [:maybe [inst?]]
+      [::m/default [:maybe :string]]]]]))
 
 (def EventFormSchema
   (-> Event
