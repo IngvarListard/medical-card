@@ -5,13 +5,7 @@
             [clojure.instant :as instant]))
 
 (def ResearchFormSchema
-  (mu/merge
-   Research
-   [:map
-    [:start_date {:optional true :display-name "Дата начала"}
-     [:multi {:dispatch :type :decode/before '#(update % :type keyword)}
-      [:maybe [inst?]]
-      [::m/default [:maybe :string]]]]]))
+  Research)
 
 (def EventFormSchema
   (-> Event

@@ -11,8 +11,13 @@
   (mt/transformer
    (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
      {:decoders (merge (:decoders json-transformer*)
-                       {'inst? (fn [v] (println v) nil)})
+                       {'inst? (fn [v] (when (seq v) mt/-string->date))})
       :encoders (:encoders json-transformer*)})))
+
+(def strict-json-transformer
+  (mt/transformer
+   mt/strip-extra-keys-transformer
+   json-transformer))
 
 
 (defn get-top-level-entries

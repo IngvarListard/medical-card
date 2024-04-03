@@ -1,10 +1,10 @@
 (ns medical-card.schemas.core-schemas
   (:require [malli.core :as m]
-            [malli.util :as mu]
             [malli.registry :as mr]
             [malli.experimental.time :as met]
             [malli.experimental.time.generator]
-            [malli.transform :as mt]
+            ;; [malli.transform :as mt]
+            ;; [malli.util :as mu]
             ;; [malli.generator :as mg]
             ;; [cheshire.core :refer [generate-string parse-string]]
             ;; [java-time :as t]
@@ -81,11 +81,4 @@
   (def DoctorToSpecialization [])
   (def User [])
   (def DoctorToOrganization [])
-  :rcf)
-
-
-;; рабочий вариант здесь
-(comment
-
-
   :rcf)
