@@ -30,7 +30,6 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
-
 (defn -main
   [& _]
   (run-jetty app-routes {:port 3000
