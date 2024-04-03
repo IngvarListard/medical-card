@@ -1,6 +1,7 @@
 (ns medical-card.db.tables
   (:require [medical-card.common :refer [defs]]))
 
+#_{:clj-kondo/ignore [:unused-binding]}
 (defs
   [documents :documents
    doctors :doctors

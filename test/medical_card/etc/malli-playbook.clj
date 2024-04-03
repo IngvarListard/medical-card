@@ -1,4 +1,4 @@
-#_{:clj-kondo/ignore [:namespace-name-mismatch]}
+#_{:clj-kondo/ignore true}
 (ns medical-card.etc.malli-playbook
   (:require [malli.core :as m]
             [malli.experimental.time.generator]
@@ -40,7 +40,7 @@
   ;; => true
   (m/validate date-schema {:date nil})
   ;; => true
-  (m/validate date-schema {:date (LocalDate/now)})
+  ;; (m/validate date-schema {:date (LocalDate/now)})
   ;; => true
   (m/validate date-schema {:date ""})
   ;; => false
@@ -57,10 +57,10 @@
   (m/-transformer-chain (mt/json-transformer))
 
 
-  (defn string->local-date
-    [s]
-    (when (seq s)
-      (LocalDate/parse s)))
+  ;; (defn string->local-date
+  ;;   [s]
+  ;;   (when (seq s)
+  ;;     (LocalDate/parse s)))
 
   (def date-schema
     [:map
@@ -76,7 +76,7 @@
   ;; => true
   (m/validate date-schema {:date nil})
   ;; => true
-  (m/validate date-schema {:date (LocalDate/now)})
+  ;; (m/validate date-schema {:date (LocalDate/now)})
   ;; => true
   (m/validate date-schema {:date ""})
 
@@ -103,12 +103,13 @@
    [string? {:decode/string '(constantly #(str "olipa_" %))}]
    "kerran" mt/string-transformer)
 
-  (m/decode
-   [string? {:decode/string {:enter clojure.string/upper-case}}]
-   "kerran" mt/string-transformer)
-  (m/decode
-   [inst? {:decode/inst? {:enter clojure.string/upper-case}}]
-   "kerran" mt/string-transformer))
+  ;; (m/decode
+  ;;  [string? {:decode/string {:enter clojure.string/upper-case}}]
+  ;;  "kerran" mt/string-transformer)
+  ;; (m/decode
+  ;;  [inst? {:decode/inst? {:enter clojure.string/upper-case}}]
+  ;;  "kerran" mt/string-transformer)
+  )
 
 
 ;; Malli properties

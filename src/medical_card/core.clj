@@ -18,7 +18,7 @@
 (c/defroutes app-routes
   (c/GET "/" [] (r/response (rum/render-html (medical-history-view))))
   (c/GET "/api/forms/create-event" [] (ajax-views/get-create-event-view))
-  (c/POST "/api/forms/create-event" [] (fn [{:keys [form-params] :as request}]
+  (c/POST "/api/forms/create-event" [] (fn [{:keys [form-params] :as _request}]
                                          (create-event form-params)))
   (c/GET "/api/forms/create-event/object-form"
     {form-params :query-string}
@@ -35,6 +35,8 @@
   (run-jetty app-routes {:port 3000
                          :join? false}))
 
+
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defonce server
   (run-jetty
    (-> #'app-routes

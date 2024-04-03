@@ -1,6 +1,5 @@
 (ns medical-card.test.schema-test.schema-core-test
-  (:require [clojure.test :refer :all]
-            [medical-card.core :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [medical-card.schemas.core-schemas :refer [Research]]
             [malli.core :as m]
             [medical-card.test.utils :refer [not-thrown?]]))

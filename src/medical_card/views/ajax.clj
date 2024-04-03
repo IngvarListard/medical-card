@@ -17,6 +17,3 @@
       rum/render-html
       r/response))
 
-
-(defn create-event
-  [form])
