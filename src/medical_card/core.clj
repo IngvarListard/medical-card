@@ -9,7 +9,7 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [medical-card.views.index-page :refer [medical-history-view]]
             [medical-card.views.ajax :as ajax-views]
-            [medical-card.views.create-event.submit :refer [create-event]]
+            [medical-card.views.create-event.submit :refer [create-event!]]
             [ring.util.codec :refer [form-decode]]
             [clojure.walk :refer [keywordize-keys]])
   (:gen-class))
@@ -19,7 +19,7 @@
   (c/GET "/" [] (r/response (rum/render-html (medical-history-view))))
   (c/GET "/api/forms/create-event" [] (ajax-views/get-create-event-view))
   (c/POST "/api/forms/create-event" [] (fn [{:keys [form-params] :as _request}]
-                                         (create-event form-params)))
+                                         (create-event! form-params)))
   (c/GET "/api/forms/create-event/object-form"
     {form-params :query-string}
     (fn [& _] (-> form-params

@@ -14,10 +14,29 @@
                        {'inst? (fn [v] (when (seq v) mt/-string->date))})
       :encoders (:encoders json-transformer*)})))
 
+(def web-form-transformer
+  (mt/transformer
+   {:name :string->nil
+    :decoders
+    {:int mt/-string->long
+     'int? mt/-string->long
+     :string mt/-string->nil
+     'inst? mt/-string->nil}}))
+
+(comment
+  (mt/-string->long "sdf")
+  (mt/-string->nil "adsf")
+
+  (m/coerce [:map [:t [:int]]] {:t "666999"} web-form-transformer)
+
+  :rcf)
+
+
 (def strict-json-transformer
   (mt/transformer
+   web-form-transformer
    mt/strip-extra-keys-transformer
-   json-transformer))
+   mt/json-transformer))
 
 
 (defn get-top-level-entries

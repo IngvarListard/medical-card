@@ -1,8 +1,10 @@
+#_{:clj-kondo/ignore [:unresolved-var]}
 (ns medical-card.schemas.core-schemas
   (:require [malli.core :as m]
             [malli.registry :as mr]
             [malli.experimental.time :as met]
             [malli.experimental.time.generator]
+            [medical-card.db.tables :refer [researches events documents]]
             ;; [malli.transform :as mt]
             ;; [malli.util :as mu]
             ;; [malli.generator :as mg]
@@ -27,7 +29,7 @@
   - disease - недуг
   - other
  "
-  [:map {:display-name "Исследование"}
+  [:map {:display-name "Исследование" :dbtable researches}
    [:name {:display-name "Имя"} [:string {:min 10 :max 200}]]
    [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
    [:type
@@ -47,7 +49,7 @@
     taking_tests - сдача анализов"
   [:map
    [:type
-    {:display-name "Тип исследования"}
+    {:display-name "Тип исследования" :dbtable events}
     [:enum
      "doctor_visit"
      "taking_tests"]]
@@ -60,7 +62,7 @@
 
 
 (def Document
-  [:map
+  [:map {:display-name "Документ" :dbtable documents}
    [:name {:display-name "Название документа"} [:string {:min 5 :max 200}]]
    [:path {:display-name "Путь к файлу"} [:string {:min 5 :max 200 :optional true}]]
    [:type {:display-name "Тип"} [:string {:min 5 :max 200}]]
