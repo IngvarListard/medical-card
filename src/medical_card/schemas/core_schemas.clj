@@ -47,9 +47,9 @@
   "Событие
     doctor_visit - прием врача
     taking_tests - сдача анализов"
-  [:map
+  [:map {:display-name "Событие" :dbtable events}
    [:type
-    {:display-name "Тип исследования" :dbtable events}
+    {:display-name "Тип исследования"}
     [:enum
      "doctor_visit"
      "taking_tests"]]
