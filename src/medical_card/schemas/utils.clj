@@ -7,7 +7,7 @@
 
 ;; Работает
 (def json-transformer
-  "Кастомный json-transformer. Обработка пустых строк как nil для дат"
+  "Грязь для преобразования пустых строк в nil"
   (mt/transformer
    (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
      {:decoders (merge (:decoders json-transformer*)
@@ -15,6 +15,7 @@
       :encoders (:encoders json-transformer*)})))
 
 (def web-form-transformer
+  "Трансформер для веб формы -- преобразование пустых строк в nil"
   (mt/transformer
    {:name :string->nil
     :decoders
@@ -32,7 +33,7 @@
   :rcf)
 
 
-(def strict-json-transformer
+(def strict-web-form-transformer
   (mt/transformer
    web-form-transformer
    mt/strip-extra-keys-transformer
@@ -49,13 +50,33 @@
 
 
 (defn schema-entry->form-params
+  "Преобразование схемы malli в контекст для создания формы"
   [entry]
   (let [[entry-name opts schema] entry
         ch (m/children schema)]
     {:name (name entry-name)
-     :type (cond (coll? schema) (first schema) :else schema)
+    ;; get end-type of linear schema
+     :type (loop [s schema]
+             (let [typ (m/type s)]
+               (cond
+                 (not (some #{typ} [:maybe])) typ
+                 :else (recur (mu/get s 0)))))
      :display-name (:display-name opts)
      :allowed-values ch}))
+
+(comment
+  ;; TODO: move to tests
+  (mu/subschemas [:maybe :string])
+  (mu/get [:maybe {} :string] 0)
+
+  (loop [s [:maybe :string]]
+    (let [typ (m/type s)]
+      (cond
+        (not (some #{typ} [:maybe])) typ
+        :else (recur (mu/get s 0)))))
+
+  (some #{:maybe} [:maybe])
+  :rcf)
 
 
 (defn walk-properties

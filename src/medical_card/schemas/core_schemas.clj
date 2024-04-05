@@ -21,6 +21,18 @@
   (m/default-schemas)
   (met/schemas)))
 
+(def research-types
+  {"routine_health_check" "Плановая проверка"
+   "unscheduled_health_check" "Внеплановая проверка"
+   "disease" "Недуг"
+   "other" "Другое"})
+
+(defn named-enum
+  [enum]
+  (as-> enum $
+    (conj [:enum] $)
+    (concat $ (keys enum))
+    (into [] $)))
 
 (def Research
   "Исследование
@@ -30,17 +42,20 @@
   - other
  "
   [:map {:display-name "Исследование" :dbtable researches}
-   [:name {:display-name "Имя"} [:string {:min 10 :max 200}]]
+   [:name {:display-name "Имя"} [:string {:min 3 :max 200}]]
    [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
    [:type
     {:display-name "Тип исследования"}
-    [:enum
-     "routine_health_check"
-     "unscheduled_health_check"
-     "disease"
-     "other"]]
+    (named-enum research-types)
+    [:enum (keys research-types) research-types]]
    [:start_date {:optional true :display-name "Дата начала"}
     [:maybe [inst?]]]])
+
+(comment
+  (m/properties (named-enum research-types))
+  (concat [:enum] ["a" "b" "c"])
+  (m/form Research)
+  :rcf)
 
 
 (def Event
@@ -48,13 +63,13 @@
     doctor_visit - прием врача
     taking_tests - сдача анализов"
   [:map {:display-name "Событие" :dbtable events}
+   [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
+   [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
    [:type
-    {:display-name "Тип исследования"}
+    {:display-name "Тип события"}
     [:enum
      "doctor_visit"
      "taking_tests"]]
-   [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
-   [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
    [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
    [:parent_id {:optional true :display-name "Предшествующее событие"} [:maybe int?]]
    [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
@@ -66,10 +81,10 @@
    [:name {:display-name "Название документа"} [:string {:min 5 :max 200}]]
    [:path {:display-name "Путь к файлу"} [:string {:min 5 :max 200 :optional true}]]
    [:type {:display-name "Тип"} [:string {:min 5 :max 200}]]
-   [:document {:display-name "Документ" :optional true} [:string]]
-   [:user_id {:display-name "Пользователь" :optional true} [:int]]
-   [:event_id {:display-name "Событие" :optional true} [:int]]
-   [:doctor_id {:display-name "Врач" :optional true} [:int]]
+   [:document {:display-name "Документ" :optional true} [:maybe :string]]
+   [:user_id {:display-name "Пользователь" :optional true} [:maybe :int]]
+   [:event_id {:display-name "Событие" :optional true} [:maybe :int]]
+   [:doctor_id {:display-name "Врач" :optional true} [:maybe :int]]
    [:report_date [:maybe inst?]]])
 
 

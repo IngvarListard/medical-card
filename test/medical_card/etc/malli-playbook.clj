@@ -5,8 +5,7 @@
             [malli.transform :as mt]
             [malli.util :as mu]
             [medical-card.schemas.utils :refer [get-top-level-entries
-                                                schema-entry->form-params
-                                                json-transformer]]
+                                                schema-entry->form-params]]
             [medical-card.schemas.core-schemas :refer [Research]]))
 
 
@@ -66,7 +65,6 @@
     [:map
      [:date inst?]])
 
-  (m/decode date-schema {:date ""} json-transformer)
   ;; => {:date nil}
   (m/decode date-schema {:date "2018-04-03"} tf)
   ;; => {:date #object[java.time.LocalDate 0x425e7c3b "2018-04-03"]}

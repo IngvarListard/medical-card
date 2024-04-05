@@ -4,13 +4,17 @@
             [medical-card.db :refer [db]]
             [medical-card.db.actions :as asql]
             [medical-card.schemas.form-schemas :refer [ResearchFormSchema]]
-            [medical-card.schemas.utils :refer [strict-json-transformer]]
+            [medical-card.schemas.utils :refer [strict-web-form-transformer]]
             [medical-card.ui.forms.research :refer [form-to-schema
                                                     research-form]]
             [next.jdbc :as jdbc]
             [ring.util.response :as r]
             [rum.core :as rum]))
 
+
+(defn ->print
+  "Print in thread macro"
+  [v] (println) v)
 
 (defn create-event!
   [form-params]
@@ -20,10 +24,12 @@
         schema (form-kw form-to-schema)]
     (as-> form-params $
       (keywordize-keys $)
-      (m/coerce schema $ strict-json-transformer)
+      (m/coerce schema $ strict-web-form-transformer)
       (asql/create schema [$])
       (jdbc/execute! db $))
     (-> form-kw
+        name
+        ->print
         research-form
         rum/render-html
         r/response)))
@@ -59,6 +65,6 @@
      :type "routine_health_check",
      :start_date nil})
 
-  (m/coerce ResearchFormSchema a strict-json-transformer)
+  (m/coerce ResearchFormSchema a strict-web-form-transformer)
 
   :rcf)

@@ -1,8 +1,11 @@
 (ns medical-card.ui.forms.research
-  (:require [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
-            [medical-card.schemas.core-schemas :refer [Research]]
-            [medical-card.schemas.utils :refer [schema-entry->form-params get-top-level-entries]]
-            [medical-card.schemas.form-schemas :refer [ResearchFormSchema EventFormSchema DocumentFormSchema]]))
+  (:require [medical-card.schemas.form-schemas :refer [DocumentFormSchema
+                                                       EventFormSchema
+                                                       ResearchFormSchema]]
+            [medical-card.schemas.utils :refer [get-top-level-entries
+                                                schema-entry->form-params]]
+            [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
+            [medical-card.ui.components.inputs :refer [form-params->input]]))
 
 
 (def ^:const input-types
@@ -12,10 +15,6 @@
   {:research ResearchFormSchema
    :event EventFormSchema
    :document DocumentFormSchema})
-
-(comment
-  (= Research (:research form-to-schema))
-  :rcf)
 
 
 (defn inputs-from-schema
@@ -44,9 +43,9 @@
                        (get form-to-schema $)
                        (get-top-level-entries $)
                        (map schema-entry->form-params $))]
-     (-> schemas-col
-         inputs-from-schema
-         (create-record-selector-form :value val)))))
+     (as-> schemas-col $
+       (map form-params->input $)
+       (create-record-selector-form $ :value val)))))
 
 
 (comment

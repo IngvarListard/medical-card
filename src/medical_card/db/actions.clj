@@ -2,7 +2,7 @@
   (:require [honey.sql :as sql]
             [malli.core :as m]
             [medical-card.schemas.core-schemas :refer [Research]]
-            [medical-card.schemas.utils :refer [strict-json-transformer]]))
+            [medical-card.schemas.utils :refer [strict-web-form-transformer]]))
 
 
 (defn create
@@ -23,11 +23,11 @@
      :description "qwerqwerqwerqwe",
      :type "routine_health_check",
      :start_date ""})
-  (m/coerce Research a strict-json-transformer)
+  (m/coerce Research a strict-web-form-transformer)
   (println (create Research [a]))
   (println (create Research []))
   (create Research [])
 
 
-  (m/coerce [:map [:id [:maybe int?]]] {:id "1"} strict-json-transformer)
+  (m/coerce [:map [:id [:maybe int?]]] {:id "1"} strict-web-form-transformer)
   :rcf)
