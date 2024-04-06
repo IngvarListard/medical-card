@@ -17,16 +17,21 @@
   [schema-params]
   (let [{:keys [name default-value display-name choices]} schema-params]
     [:div
-     (into
-      [:select
-       (merge
-        {:id name
-         :name name
-         :class "form-select"
-         :aria-label display-name}
-        (when default-value
-          {:value default-value}))]
-      (map (fn [[k v]] [:option {:value k} v]) choices))]))
+     [:div {:class "input-group"}
+      [:div {:class "col-md-12"}
+       [:label {:for name :class "form-label"}
+        display-name]
+       [:div {:class "col-md-12"}
+        (into
+         [:select
+          (merge
+           {:id name
+            :name name
+            :class "form-select"
+            :aria-label display-name}
+           (when default-value
+             {:value default-value}))]
+         (map (fn [[k v]] [:option {:value k} v]) choices))]]]]))
 
 (comment
   (form-params->input

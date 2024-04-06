@@ -42,7 +42,7 @@
   - other
  "
   [:map {:display-name "Исследование" :dbtable researches}
-   [:name {:display-name "Имя"} [:string {:min 3 :max 200}]]
+   [:name {:display-name "Название"} [:string {:min 3 :max 200}]]
    [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
    [:type
     {:display-name "Тип исследования"}
@@ -57,6 +57,11 @@
   :rcf)
 
 
+(def event-choices
+  {"doctor_visit" "Визит к врачу"
+   "taking_tests" "Сдача анализов"})
+
+
 (def Event
   "Событие
     doctor_visit - прием врача
@@ -65,21 +70,24 @@
    [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
    [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
    [:type
-    {:display-name "Тип события"}
-    [:enum
-     "doctor_visit"
-     "taking_tests"]]
+    {:display-name "Тип события" }
+    (named-enum event-choices)]
    [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
    [:parent_id {:optional true :display-name "Предшествующее событие"} [:maybe int?]]
    [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
 
 
+(def document-choices
+  {"doctor_opinion" "Заключение врача"
+   "tests_result" "Результаты анализов"})
+
+
 (def Document
   [:map {:display-name "Документ" :dbtable documents}
    [:name {:display-name "Название документа"} [:string {:min 5 :max 200}]]
    [:path {:display-name "Путь к файлу"} [:string {:min 5 :max 200 :optional true}]]
-   [:type {:display-name "Тип"} [:string {:min 5 :max 200}]]
+   [:type {:display-name "Тип документа"} (named-enum document-choices)]
    [:document {:display-name "Документ" :optional true} [:maybe :string]]
    [:user_id {:display-name "Пользователь" :optional true} [:maybe :int]]
    [:event_id {:display-name "Событие" :optional true} [:maybe :int]]

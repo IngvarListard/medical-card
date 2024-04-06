@@ -7,7 +7,7 @@
 
 (def EventFormSchema
   (-> Event
-      (mu/assoc :event_type_id [:maybe :string])
+      (mu/dissoc :event_type_id)
       (mu/assoc :parent_id [:maybe :string])
       (mu/assoc :research_id [:maybe :string])
       (mu/dissoc :updated_at)))

@@ -67,4 +67,6 @@
 
   (m/coerce ResearchFormSchema a strict-web-form-transformer)
 
+  (asql/create ResearchFormSchema [a])
+
   :rcf)
