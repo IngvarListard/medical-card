@@ -5,7 +5,7 @@
                           (derive :string :text)
                           (derive :int :text)
                           (derive 'string? :text)
-                          (derive 'inst? :text)
+                          (derive 'inst? :date)
                           (derive :enum :select)
                           atom))
 
@@ -61,6 +61,22 @@
           :type "text"
           :value default-value
           :class "form-control"}]]]])))
+
+(defmethod form-params->input :date
+  date-input
+  [schema-params]
+  (let [{:keys [name default-value display-name]} schema-params]
+    [:div
+     [:div {:class "input-group"}
+      [:div {:class "col-md-12"}
+       [:label {:for name :class "form-label"}
+        display-name]]]
+     [:div
+      {:class "row justify-content-center"}
+      [:div
+       {:class "col-lg-12 col-sm-12"}
+       [:input {:id name :name name :class "form-control" :type "date"}]
+       [:span {:id "startDateSelected"}]]]]))
 
 
 (comment
