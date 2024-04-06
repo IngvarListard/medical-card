@@ -13,7 +13,7 @@
 
 
 (defn ->print
-  "Print in thread macro"
+  "Print for thread macro"
   [v] (println) v)
 
 (defn create-event!

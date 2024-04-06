@@ -78,6 +78,15 @@
   ;; => true
   (m/validate date-schema {:date ""})
 
+;; Работает
+(def json-transformer
+  "Грязь для преобразования пустых строк в nil"
+  (mt/transformer
+   (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
+     {:decoders (merge (:decoders json-transformer*)
+                       {'inst? (fn [v] (when (seq v) mt/-string->date))})
+      :encoders (:encoders json-transformer*)})))
+
   (def trans
     (mt/transformer
   ;;  mt/json-transformer

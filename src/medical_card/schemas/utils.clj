@@ -5,15 +5,6 @@
             [malli.util :as mu]))
 
 
-;; Работает
-(def json-transformer
-  "Грязь для преобразования пустых строк в nil"
-  (mt/transformer
-   (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
-     {:decoders (merge (:decoders json-transformer*)
-                       {'inst? (fn [v] (when (seq v) mt/-string->date))})
-      :encoders (:encoders json-transformer*)})))
-
 (def web-form-transformer
   "Трансформер для веб формы -- преобразование пустых строк в nil"
   (mt/transformer
@@ -34,6 +25,7 @@
 
 
 (def strict-web-form-transformer
+  "Отбрасывает из схемы несуществующие поля"
   (mt/transformer
    web-form-transformer
    mt/strip-extra-keys-transformer
@@ -41,6 +33,7 @@
 
 
 (defn get-top-level-entries
+  "Разбить map схему на список входящих в неё полей"
   ([schema] (get-top-level-entries schema nil))
   ([schema fields]
    (let [schema* (if fields (mu/select-keys schema fields) schema)]
@@ -53,19 +46,39 @@
   "Преобразование схемы malli в контекст для создания формы"
   [entry]
   (let [[entry-name opts schema] entry
-        ch (m/children schema)]
+        [typ choices] (loop [s schema
+                             t (m/type schema)]  ;; get end-type of linear schema
+                        (cond
+                          (not (some #{t} [:maybe])) [t (-> s m/properties :choices)]
+                          :else (recur
+                                 (mu/get s 0) (m/type (mu/get s 0)))))]
     {:name (name entry-name)
-    ;; get end-type of linear schema
-     :type (loop [s schema]
-             (let [typ (m/type s)]
-               (cond
-                 (not (some #{typ} [:maybe])) typ
-                 :else (recur (mu/get s 0)))))
+     :type typ
      :display-name (:display-name opts)
-     :allowed-values ch}))
+     :choices choices}))
 
 (comment
-  ;; TODO: move to tests
+  ;; TODO: move to test
+  ;; test 2
+  (schema-entry->form-params [:description {:display-name "Описание"} [:maybe [:string {:min 0, :max 2000}]]])
+  (mu/get [:maybe [:string {:min 0, :max 2000}]] 0)
+  ;;test 1
+  (m/properties [:enum {:choices {"routine_health_check" "Плановая проверка", "unscheduled_health_check" "Внеплановая проверка", "disease" "Недуг", "other" "Другое"}} "routine_health_check" "unscheduled_health_check" "disease" "other"])
+  (schema-entry->form-params [:type
+                              {:display-name "Тип исследования"}
+                              [:enum
+                               {:choices
+                                {"routine_health_check" "Плановая проверка",
+                                 "unscheduled_health_check" "Внеплановая проверка",
+                                 "disease" "Недуг",
+                                 "other" "Другое"}}
+                               "routine_health_check"
+                               "unscheduled_health_check"
+                               "disease"
+                               "other"]])
+
+  (require '[medical-card.schemas.core-schemas :refer [Research]])
+  (get-top-level-entries Research)
   (mu/subschemas [:maybe :string])
   (mu/get [:maybe {} :string] 0)
 

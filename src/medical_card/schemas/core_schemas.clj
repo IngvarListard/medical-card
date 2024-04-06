@@ -21,7 +21,7 @@
   (m/default-schemas)
   (met/schemas)))
 
-(def research-types
+(def research-choices
   {"routine_health_check" "Плановая проверка"
    "unscheduled_health_check" "Внеплановая проверка"
    "disease" "Недуг"
@@ -29,7 +29,7 @@
 
 (defn named-enum
   [enum]
-  (as-> enum $
+  (as-> {:choices enum} $
     (conj [:enum] $)
     (concat $ (keys enum))
     (into [] $)))
@@ -46,13 +46,12 @@
    [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
    [:type
     {:display-name "Тип исследования"}
-    (named-enum research-types)
-    [:enum (keys research-types) research-types]]
+    (named-enum research-choices)]
    [:start_date {:optional true :display-name "Дата начала"}
     [:maybe [inst?]]]])
 
 (comment
-  (m/properties (named-enum research-types))
+  (m/properties (named-enum research-choices))
   (concat [:enum] ["a" "b" "c"])
   (m/form Research)
   :rcf)

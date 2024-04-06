@@ -34,6 +34,9 @@
          :value default-value
          :class "form-control"}]]])))
 
+(defn ->print
+  "Print for thread macro"
+  [v] (println) v)
 
 (defn research-form
   ([] (research-form "research"))
@@ -51,4 +54,16 @@
 (comment
   (inputs-from-schema [{:name "testname" :type :string :display-name "Поле!"}])
   (research-form)
+
+  (let [schemas-col (as-> "research" $
+                       (keyword $)
+                       (get form-to-schema $)
+                       (get-top-level-entries $)
+                       (map schema-entry->form-params $))]
+     (as-> schemas-col $
+       (map form-params->input $)
+       (create-record-selector-form $ :value val)))
+
+  
+  
   :rcf)
