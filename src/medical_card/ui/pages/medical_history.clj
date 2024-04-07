@@ -1,5 +1,5 @@
-(ns medical-card.ui.medical-history
-  (:require [medical-card.ui.create-event-dialog :refer [new-event-dialog]]))
+(ns medical-card.ui.pages.medical-history
+  (:require [medical-card.ui.forms.create-event-dialog :refer [new-event-dialog]]))
 
 
 (defn history-table [documents]
@@ -34,10 +34,4 @@
                   {:events/name "event" :doctors/name "doctor name" :events/created_at "time" :documents/name "document name" :organizations/name "organization name"}
                   {:events/name "event" :doctors/name "doctor name" :events/created_at "time" :documents/name "document name" :organizations/name "organization name"}])
 
-  (concat [1 2 3] [4 5 6])
-
-  (for [i [1 2 3 4 5]]
-    (-> i))
-
-  (new-event-dialog)
   :rfc)

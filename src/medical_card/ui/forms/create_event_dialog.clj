@@ -1,13 +1,12 @@
-(ns medical-card.ui.create-event-dialog
+(ns medical-card.ui.forms.create-event-dialog
   (:require [medical-card.constants :refer [object-type-choices]]
             [rum.core :as r]
-            [medical-card.ui.forms.list-const :as c]
             [medical-card.ui.components.inputs :refer [form-params->input]]))
 
 
 (def ^:const ^:private ctx
-  {:form-id "new-event-form"
-   :selector-id "select-object"})
+  {::form-id "new-event-form"
+   ::selector-id "select-object"})
 
 
 (defn t-id
@@ -22,7 +21,7 @@
     :class "btn btn-primary",
     :onclick "my_modal_1.showModal()"
     :hx-get "/api/forms/create-event"
-    :hx-target (t-id :form-id)
+    :hx-target (t-id ::form-id)
     :hx-swap "outerHTML"}
    "Добавить"])
 
@@ -32,17 +31,17 @@
   ([] (create-record-selector-form ""))
   ([form-content & {:keys [_] :as v}]
    [:form {:hx-post "/api/forms/create-event" 
-           :id (:form-id ctx)}
+           :id (::form-id ctx)}
     (form-params->input {:choices object-type-choices
-                         :name (:selector-id ctx)
+                         :name (::selector-id ctx)
                          :default-value (:value v)
                          :display-name "Создаваемый объект"
                          :type :select}
                         {:hx-trigger "change"
                          :hx-get "/api/forms/create-event/object-form"
-                         :hx-target (t-id :form-id)
+                         :hx-target (t-id ::form-id)
                          :hx-swap "outerHTML"
-                         :hx-include (format "[name='%s']" (:selector-id ctx))})
+                         :hx-include (format "[name='%s']" (::selector-id ctx))})
     form-content
     [:div {:class " modal-footer "}
      [:button
@@ -58,7 +57,7 @@
   []
   [:dialog.modal#my_modal_1
    [:div.modal-box
-    [:form {:id (:form-id ctx)}
+    [:form {:id (::form-id ctx)}
      [:button
       {:type " button ",
        :class " btn-close ",

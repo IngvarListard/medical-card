@@ -138,17 +138,3 @@
    {::m/walk-entry-vals true})
 
   :rcf)
-
-(comment
-  (require '[squint.compiler :as squint])
-
-  (def state (atom nil))
-  (defn ->js [form]
-    (let [res (squint.compiler/compile-string* (str form))]
-      (reset! state res)
-      (:body res)))
-
-  (->js '(let [elt (js/document.getElementById "counter")
-               val (-> (.-innerText elt) parse-long)]
-           (set! elt -innerText (inc val))))
-  :rcf)

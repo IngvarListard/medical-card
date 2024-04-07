@@ -4,7 +4,7 @@
                                                        ResearchFormSchema]]
             [medical-card.schemas.utils :refer [get-top-level-entries
                                                 schema-entry->form-params]]
-            [medical-card.ui.create-event-dialog :refer [create-record-selector-form]]
+            [medical-card.ui.forms.create-event-dialog :refer [create-record-selector-form]]
             [medical-card.ui.components.inputs :refer [form-params->input]]))
 
 

@@ -1,5 +1,9 @@
 #_{:clj-kondo/ignore [:unresolved-var]}
 (ns medical-card.schemas.core-schemas
+"Дополнительные ключи
+ - :display-name -- человекочитаемое название для отображения на клиенте
+ - :dbtable -- соответствующая схеме таблица в БД
+ - :choices -- поле для человекочитаемого описания значений enum"
   (:require [malli.core :as m]
             [malli.registry :as mr]
             [malli.experimental.time :as met]

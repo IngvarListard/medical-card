@@ -1,5 +1,6 @@
 (ns medical-card.ui.core
-  (:require [rum.core :as r]))
+  (:require [rum.core :as r]
+            [squint.compiler :as squint]))
 
 
 (defn head []
@@ -29,3 +30,19 @@
    {:lang "ru" :html ""}
    (head)
    (body content)])
+
+
+(def state (atom nil))
+
+
+(defn ->js [form]
+  (let [res (squint.compiler/compile-string* (str form))]
+    (reset! state res)
+    (:body res)))
+
+(comment
+  ;; ->js example
+  (->js '(let [elt (js/document.getElementById "counter")
+               val (-> (.-innerText elt) parse-long)]
+           (set! elt -innerText (inc val))))
+  :rcf)

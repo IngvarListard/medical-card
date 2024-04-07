@@ -22,12 +22,11 @@
      [:div
       (nth opts 0)
       (into
-       [:select
+       [:select.select.select-bordered.w-full.max-w-md.select-sm
         (merge
          {:id name
           :name name
-          :aria-label display-name
-          :class "select select-bordered w-full max-w-md"}
+          :aria-label display-name}
          (when default-value
            {:value default-value}))]
        (map (fn [[k v]] [:option {:value k} v]) choices))]]))
@@ -47,31 +46,26 @@
   text-input
   [schema-params & _]
   (let [{:keys [name default-value display-name]} schema-params]
-    [:label {:class "form-control"}
-     [:div {:class "label"}
-      [:span {:class "label-text"} display-name]]
-     [:input
+    [:label.form-control
+     [:div.label
+      [:span.label-text display-name]]
+     [:input.input.input-bordered.w-full.max-w-md.input-sm
       {:id name
        :name name
        :type "text"
-       :value default-value
-       :class "input input-bordered w-full max-w-md"}]]))
+       :value default-value}]]))
 
 (defmethod form-params->input :date
   date-input
   [schema-params & _]
-  (let [{:keys [name default-value display-name]} schema-params]
-    [:div
-     [:div {:class "input-group"}
-      [:div {:class "col-md-12"}
-       [:label {:for name :class "form-label"}
-        display-name]]]
-     [:div
-      {:class "row justify-content-center"}
-      [:div
-       {:class "col-lg-12 col-sm-12"}
-       [:input {:id name :name name :class "form-control" :type "date"}]
-       [:span {:id "startDateSelected"}]]]]))
+  (let [{:keys [name display-name]} schema-params]
+    [:label.form-control
+     [:div.label
+      [:span.label-text display-name]]
+     [:input.input.input-bordered.w-full.max-w-md.input-sm
+      {:id    name
+       :name  name
+       :type  "date"}]]))
 
 
 (comment
