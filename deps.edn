@@ -1,0 +1,19 @@
+{:paths ["src" "resources"],
+ :deps
+ {org.clojure/clojure {:mvn/version "1.11.1"},
+  ring/ring-core {:mvn/version "1.11.0"},
+  ring/ring-jetty-adapter {:mvn/version "1.11.0"},
+  compojure/compojure {:mvn/version "1.7.1"},
+  ring/ring-devel {:mvn/version "1.12.0"},
+  ring/ring-json {:mvn/version "0.5.1"},
+  rum/rum {:mvn/version "0.12.11"},
+  com.github.seancorfield/next.jdbc {:mvn/version "1.3.925"},
+  org.xerial/sqlite-jdbc {:mvn/version "3.43.0.0"},
+  migratus/migratus {:mvn/version "1.5.5"},
+  com.fzakaria/slf4j-timbre {:mvn/version "0.4.1"},
+  com.github.seancorfield/honeysql {:mvn/version "2.6.1126"},
+  cheshire/cheshire {:mvn/version "5.12.0"},
+  metosin/malli {:mvn/version "0.15.0"},
+  clojure.java-time/clojure.java-time {:mvn/version "1.4.2"},
+  lambdaisland/kaocha {:mvn/version "1.88.1376"}
+  squint/squint {:git/url "https://github.com/squint-cljs/squint" :git/sha "9d2415394be87832658f4a278761b19be1f520e0"}}}

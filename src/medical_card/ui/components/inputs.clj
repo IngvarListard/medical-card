@@ -9,29 +9,28 @@
                           (derive :enum :select)
                           atom))
 
-(defmulti form-params->input #(:type %) :hierarchy inputs-hierarchy)
+(defmulti form-params->input (fn [v & _] (:type v)) :hierarchy inputs-hierarchy)
 
 
 (defmethod form-params->input :select
   select-input
-  [schema-params]
+  [schema-params & opts]
   (let [{:keys [name default-value display-name choices]} schema-params]
-    [:div
-     [:div {:class "input-group"}
-      [:div {:class "col-md-12"}
-       [:label {:for name :class "form-label"}
-        display-name]
-       [:div {:class "col-md-12"}
-        (into
-         [:select
-          (merge
-           {:id name
-            :name name
-            :class "form-select"
-            :aria-label display-name}
-           (when default-value
-             {:value default-value}))]
-         (map (fn [[k v]] [:option {:value k} v]) choices))]]]]))
+    [:label {:class "form-control"}
+     [:div {:class "label"}
+      [:span {:class "label-text"} display-name]]
+     [:div
+      (nth opts 0)
+      (into
+       [:select
+        (merge
+         {:id name
+          :name name
+          :aria-label display-name
+          :class "select select-bordered w-full max-w-md"}
+         (when default-value
+           {:value default-value}))]
+       (map (fn [[k v]] [:option {:value k} v]) choices))]]))
 
 (comment
   (form-params->input
@@ -46,25 +45,21 @@
 
 (defmethod form-params->input :text
   text-input
-  [schema-params]
+  [schema-params & _]
   (let [{:keys [name default-value display-name]} schema-params]
-    (into
-     [:div
-      [:div {:class "input-group"}
-       [:div {:class "col-md-12"}
-        [:label {:for name :class "form-label"}
-         display-name]]
-       [:div {:class "col-md-12"}
-        [:input
-         {:id name
-          :name name
-          :type "text"
-          :value default-value
-          :class "form-control"}]]]])))
+    [:label {:class "form-control"}
+     [:div {:class "label"}
+      [:span {:class "label-text"} display-name]]
+     [:input
+      {:id name
+       :name name
+       :type "text"
+       :value default-value
+       :class "input input-bordered w-full max-w-md"}]]))
 
 (defmethod form-params->input :date
   date-input
-  [schema-params]
+  [schema-params & _]
   (let [{:keys [name default-value display-name]} schema-params]
     [:div
      [:div {:class "input-group"}

@@ -47,6 +47,8 @@
 
 
 (comment
+  (.stop server)
+  (.start server)
   (require 'kaocha.watch
            'kaocha.repl)
   (kaocha.watch/run (kaocha.repl/config))

@@ -1,12 +1,13 @@
 (ns medical-card.ui.create-event-dialog
-  (:require [medical-card.constants :refer [object-types]]
+  (:require [medical-card.constants :refer [object-type-choices]]
             [rum.core :as r]
-            [medical-card.ui.forms.list-const :as c]))
+            [medical-card.ui.forms.list-const :as c]
+            [medical-card.ui.components.inputs :refer [form-params->input]]))
 
 
 (def ^:const ^:private ctx
   {:form-id "new-event-form"
-   :selector-id "select-object-input"})
+   :selector-id "select-object"})
 
 
 (defn t-id
@@ -19,71 +20,50 @@
   [:button
    {:type "button",
     :class "btn btn-primary",
-    :data-bs-toggle "modal",
-    :data-bs-target "#new-event"
+    :onclick "my_modal_1.showModal()"
     :hx-get "/api/forms/create-event"
     :hx-target (t-id :form-id)
     :hx-swap "outerHTML"}
-   "Добавить запись"])
-
-
-(defn selector
-  "Селектор типов объектов для создания"
-  [items & {:keys [value] :as v}]
-  [:div
-   {:hx-trigger "change"
-    :hx-get "/api/forms/create-event/object-form"
-    :hx-target (t-id :form-id)
-    :hx-swap "outerHTML"
-    :hx-include "[name='select-object']"}
-   (into
-    [:select
-     (merge
-      {:id (:selector-id ctx)
-      :name (:select-object c/forms)
-      :class "form-select"
-      :aria-label "Выберите тип записи"}
-      (when value v))]
-    (map (fn [i] [:option {:value (:name i)} (:display-name i)]) items))])
+   "Добавить"])
 
 
 (r/defc create-record-selector-form
   "Форма с селектором выбора типа объекта для создания"
   ([] (create-record-selector-form ""))
   ([form-content & {:keys [_] :as v}]
-   [:form {:hx-post "/api/forms/create-event" :id (:form-id ctx)}
-    (selector object-types v)
+   [:form {:hx-post "/api/forms/create-event" 
+           :id (:form-id ctx)}
+    (form-params->input {:choices object-type-choices
+                         :name (:selector-id ctx)
+                         :default-value (:value v)
+                         :display-name "Создаваемый объект"
+                         :type :select}
+                        {:hx-trigger "change"
+                         :hx-get "/api/forms/create-event/object-form"
+                         :hx-target (t-id :form-id)
+                         :hx-swap "outerHTML"
+                         :hx-include (format "[name='%s']" (:selector-id ctx))})
     form-content
-    [:div {:class "modal-footer"}
+    [:div {:class " modal-footer "}
      [:button
-      {:type "button",
-       :class "btn btn-secondary",
-       :data-bs-dismiss "modal"}
-      "Close"]
-     [:button {:type "submit", :class "btn btn-primary"}
-      "Save changes"]]]))
+      {:type " button ",
+       :class " btn btn-secondary ",
+       :data-bs-dismiss " modal "}
+      " Close "]
+     [:button {:type " submit ", :class " btn btn-primary "}
+      " Save changes "]]]))
 
 
 (defn dialog
   []
-  [:div
-   {:class "modal fade",
-    :id "new-event",
-    :tabindex "-1",
-    :aria-labelledby "new-event-label",
-    :aria-hidden "true"}
-   [:div {:class "modal-dialog"}
-    [:div {:class "modal-content"}
-     [:div {:class "modal-header"}
-      [:h1 {:class "modal-title fs-5", :id "new-event-label"}
-       "Новая запись"]]
-     [:div {:class "modal-body"}
-      [:form {:id (:form-id ctx)}
-       [:button
-        {:type "button",
-         :class "btn-close",
-         :data-bs-dismiss "modal",
-         :aria-label "Close"}]]]]]])
+  [:dialog.modal#my_modal_1
+   [:div.modal-box
+    [:form {:id (:form-id ctx)}
+     [:button
+      {:type " button ",
+       :class " btn-close ",
+       :data-bs-dismiss " modal ",
+       :aria-label " Close "}]]]])
 
 
 (defn new-event-dialog []

@@ -18,10 +18,9 @@
                  [cheshire "5.12.0"]
                  [metosin/malli "0.15.0"]
                  [clojure.java-time "1.4.2"]
-                 [lambdaisland/kaocha "1.88.1376"]
-                 [org.babashka/sci "0.8.41"]]
+                 [lambdaisland/kaocha "1.88.1376"]]
   :plugins [[lein-ring "0.12.6"]
-            [migratus-lein "0.7.3"]]
+            [migratus-lein "0.7.3"] ]
   :ring {:auto-reload? true
          ;;:handler myproject.core/app
          :open-browser? false

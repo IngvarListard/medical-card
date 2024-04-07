@@ -70,7 +70,7 @@
    [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
    [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
    [:type
-    {:display-name "Тип события" }
+    {:display-name "Тип события"}
     (named-enum event-choices)]
    [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
    [:parent_id {:optional true :display-name "Предшествующее событие"} [:maybe int?]]

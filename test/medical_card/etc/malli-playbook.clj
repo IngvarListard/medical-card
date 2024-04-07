@@ -79,13 +79,13 @@
   (m/validate date-schema {:date ""})
 
 ;; Работает
-(def json-transformer
-  "Грязь для преобразования пустых строк в nil"
-  (mt/transformer
-   (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
-     {:decoders (merge (:decoders json-transformer*)
-                       {'inst? (fn [v] (when (seq v) mt/-string->date))})
-      :encoders (:encoders json-transformer*)})))
+  (def json-transformer
+    "Грязь для преобразования пустых строк в nil"
+    (mt/transformer
+     (let [json-transformer* (m/-transformer-chain (mt/json-transformer))]
+       {:decoders (merge (:decoders json-transformer*)
+                         {'inst? (fn [v] (when (seq v) mt/-string->date))})
+        :encoders (:encoders json-transformer*)})))
 
   (def trans
     (mt/transformer
@@ -137,4 +137,18 @@
      (println schema path children options))
    {::m/walk-entry-vals true})
 
+  :rcf)
+
+(comment
+  (require '[squint.compiler :as squint])
+
+  (def state (atom nil))
+  (defn ->js [form]
+    (let [res (squint.compiler/compile-string* (str form))]
+      (reset! state res)
+      (:body res)))
+
+  (->js '(let [elt (js/document.getElementById "counter")
+               val (-> (.-innerText elt) parse-long)]
+           (set! elt -innerText (inc val))))
   :rcf)
