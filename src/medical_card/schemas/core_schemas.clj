@@ -77,9 +77,11 @@
     {:display-name "Тип события"}
     (named-enum event-choices)]
    [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
-   [:parent_id {:optional true :display-name "Предшествующее событие"} [:maybe int?]]
+   [:parent_id {:optional true :display-name "Предшествующее событие" :ref Event} [:maybe int?]]
    [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
+
+(m/form Event)
 
 
 (def document-choices

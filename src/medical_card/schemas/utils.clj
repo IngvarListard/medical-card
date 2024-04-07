@@ -57,6 +57,14 @@
      :display-name (:display-name opts)
      :choices choices}))
 
+
+(defn schema-ref->choices
+  [schema]
+  (let [[entry opts schema*] (get-top-level-entries schema)]
+    ;; (if (not (:ref opts)) schema
+    ;;     )
+    ))
+
 (comment
   ;; TODO: move to test
   ;; test 2
