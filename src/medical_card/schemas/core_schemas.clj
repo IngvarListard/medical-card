@@ -1,6 +1,6 @@
 #_{:clj-kondo/ignore [:unresolved-var]}
 (ns medical-card.schemas.core-schemas
-"Дополнительные ключи
+  "Дополнительные ключи
  - :display-name -- человекочитаемое название для отображения на клиенте
  - :dbtable -- соответствующая схеме таблица в БД
  - :choices -- поле для человекочитаемого описания значений enum"
@@ -16,7 +16,8 @@
             ;; [java-time :as t]
             ;; [malli.json-schema :as json-schema]
             ;; [malli.experimental.time.transform :as mett]
-            ))
+            
+            [malli.util :as mu]))
 
 
 ;; подключение экспериментальных схем для обработки дат
@@ -71,17 +72,20 @@
     doctor_visit - прием врача
     taking_tests - сдача анализов"
   [:map {:display-name "Событие" :dbtable events}
+   [:id {:optional true} [:maybe int?]]
    [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
    [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
    [:type
     {:display-name "Тип события"}
     (named-enum event-choices)]
    [:event_type_id {:optional true :display-name "Тип события"} [:maybe int?]]
-   [:parent_id {:optional true :display-name "Предшествующее событие" :ref Event} [:maybe int?]]
+   [:parent_id
+    {:optional true
+     :display-name "Предшествующее событие"
+     :ref {:for Event :to :id}}
+    [:maybe int?]]
    [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
-
-(m/form Event)
 
 
 (def document-choices

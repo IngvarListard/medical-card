@@ -1,19 +1,30 @@
 (ns medical-card.views.ajax
-  (:require [rum.core :as rum]
+  (:require [medical-card.db :refer [db]]
+            [medical-card.db.actions :refer [enrich-choices!]]
+            [medical-card.ui.forms.research :refer [research-form
+                                                    schema-entry->forms-params]]
             [ring.util.response :as r]
-            [medical-card.ui.forms.research :refer [research-form]]))
+            [rum.core :as rum]))
 
 
 (defn get-create-event-view []
-  (-> (research-form)
-      rum/render-html
-      r/response))
+  (as-> (schema-entry->forms-params "research" enrich-choices!) $
+    (research-form "research" $)
+    rum/render-html
+    r/response))
+
+
+(comment
+  (as-> (schema-entry->forms-params "research" (partial enrich-choices! db)) $
+    (research-form "research" $))
+  :rcf)
 
 
 (defn get-record-form-view
   [object-for]
-  (-> object-for
-      research-form
-      rum/render-html
-      r/response))
+  (as-> object-for $
+    (schema-entry->forms-params $ enrich-choices!)
+    (research-form object-for $)
+    rum/render-html
+    r/response))
 

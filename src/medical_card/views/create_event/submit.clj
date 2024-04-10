@@ -5,7 +5,7 @@
             [medical-card.db.actions :as asql]
             [medical-card.schemas.form-schemas :refer [ResearchFormSchema]]
             [medical-card.schemas.utils :refer [strict-web-form-transformer]]
-            [medical-card.ui.forms.research :refer [form-to-schema
+            [medical-card.ui.forms.research :refer [form->schema
                                                     research-form]]
             [next.jdbc :as jdbc]
             [ring.util.response :as r]
@@ -21,7 +21,7 @@
   (let [form-kw (as-> form-params $
                   (get $ "select-object")
                   (keyword $))
-        schema (form-kw form-to-schema)]
+        schema (form-kw form->schema)]
     (as-> form-params $
       (keywordize-keys $)
       (m/coerce schema $ strict-web-form-transformer)

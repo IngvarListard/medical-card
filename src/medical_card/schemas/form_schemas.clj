@@ -1,17 +1,32 @@
 (ns medical-card.schemas.form-schemas
-  (:require [malli.util :as mu]
+  (:require [honey.sql.helpers :refer [from select] :as h]
+            [malli.util :as mu]
             [medical-card.schemas.core-schemas :refer [Document Event Research]]
-            [medical-card.db.tables :refer [researches events documents]]))
+            [medical-card.schemas.utils :refer [table]]))
 
 (def ResearchFormSchema
   Research)
+
+(defn update-entry-prop
+  [schema entry props]
+  (mu/merge schema [:map [entry props (mu/get schema entry)]]))
 
 (def EventFormSchema
   (-> Event
       (mu/dissoc :event_type_id)
       (mu/assoc :parent_id [:maybe :string])
       (mu/assoc :research_id [:maybe :string])
-      (mu/dissoc :updated_at)))
+      (mu/dissoc :updated_at)
+      (update-entry-prop
+       :parent_id
+       {:enrich-choices {:hsql (-> (select :id :name)
+                                   (from (table Event)))
+                         :transform (fn [query-result]
+                                      (map
+                                       (fn [e] {(str (:events/id e)) (:events/name e)})
+                                       query-result))}})))
+
+
 
 (def DocumentFormSchema
   (-> Document

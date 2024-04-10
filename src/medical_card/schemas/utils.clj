@@ -44,26 +44,37 @@
 
 (defn schema-entry->form-params
   "Преобразование схемы malli в контекст для создания формы"
-  [entry]
+  ([entry] (schema-entry->form-params entry nil))
+  ([entry enrich-choices]
   (let [[entry-name opts schema] entry
         [typ choices] (loop [s schema
                              t (m/type schema)]  ;; get end-type of linear schema
                         (cond
                           (not (some #{t} [:maybe])) [t (-> s m/properties :choices)]
                           :else (recur
-                                 (mu/get s 0) (m/type (mu/get s 0)))))]
+                                 (mu/get s 0) (m/type (mu/get s 0)))))
+        choices* (:or (when enrich-choices (-> opts :choices-hsql (enrich-choices))) choices)]
     {:name (name entry-name)
      :type typ
      :display-name (:display-name opts)
-     :choices choices}))
+     :choices choices*})))
 
 
 (defn schema-ref->choices
-  [schema]
-  (let [[entry opts schema*] (get-top-level-entries schema)]
-    ;; (if (not (:ref opts)) schema
+  [schema-entry]
+  (let [[entry opts schema] schema-entry]
+    ;; (if-let [ref (:ref opts)]
     ;;     )
-    ))
+    schema))
+
+(comment
+  (schema-entry->form-params [:name {:test "val"} :string])
+  (schema-ref->choices [:name {:test "val"} :string])
+  :rcf)
+
+(defn table
+  [schema]
+  (->  schema m/properties :dbtable))
 
 (comment
   ;; TODO: move to test

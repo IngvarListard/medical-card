@@ -6,6 +6,7 @@
                           (derive :int :text)
                           (derive 'string? :text)
                           (derive 'inst? :date)
+                          (derive 'int? :text)
                           (derive :enum :select)
                           atom))
 

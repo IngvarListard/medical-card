@@ -8,62 +8,49 @@
             [medical-card.ui.components.inputs :refer [form-params->input]]))
 
 
-(def ^:const input-types
-  {:string "text"})
-
-(def form-to-schema
+(def form->schema
   {:research ResearchFormSchema
    :event EventFormSchema
    :document DocumentFormSchema})
 
 
-(defn inputs-from-schema
-  [input-cols]
-  (into
-   [:div]
-   (for [{:keys [name type default-value display-name]} input-cols]
-     [:div {:class "input-group"}
-      [:div {:class "col-md-12"}
-       [:label {:for name :class "form-label"}
-        display-name]]
-      [:div {:class "col-md-12"}
-       [:input
-        {:id name
-         :name name
-         :type (get input-types type)
-         :value default-value
-         :class "form-control"}]]])))
+(defn schema-entry->forms-params
+  ([] (schema-entry->forms-params "research" nil))
+  ([form] (schema-entry->forms-params form nil))
+  ([form enrich-choices]
+   (let [enrich-choices* (if enrich-choices
+                           (fn [[_ e _ :as entry]]
+                             (if-let [ech (:enrich-choices e)]
+                               (enrich-choices (:hsql ech) (:transform ech))
+                               entry))
+                           identity)]
+     (as-> form $
+       (keyword $)
+       (get form->schema $)
+       (get-top-level-entries $)
+       (map enrich-choices* $)
+       (map schema-entry->form-params $)))))
 
-(defn ->print
-  "Print for thread macro"
-  [v] (println) v)
 
 (defn research-form
-  ([] (research-form "research"))
-  ([val]
-   (let [schemas-col (as-> val $
-                       (keyword $)
-                       (get form-to-schema $)
-                       (get-top-level-entries $)
-                       (map schema-entry->form-params $))]
-     (as-> schemas-col $
+  ([] (research-form "research" nil))
+  ([form] (research-form form nil))
+  ([form schemas-col]
+   (let [schemas-col* (or schemas-col (schema-entry->forms-params form))]
+     (as-> schemas-col* $
        (map form-params->input $)
-       (create-record-selector-form $ :value val)))))
+       (create-record-selector-form $ :value form)))))
 
 
 (comment
-  (inputs-from-schema [{:name "testname" :type :string :display-name "Поле!"}])
   (research-form)
 
   (let [schemas-col (as-> "research" $
-                       (keyword $)
-                       (get form-to-schema $)
-                       (get-top-level-entries $)
-                       (map schema-entry->form-params $))]
-     (as-> schemas-col $
-       (map form-params->input $)
-       (create-record-selector-form $ :value val)))
-
-  
-  
+                      (keyword $)
+                      (get form->schema $)
+                      (get-top-level-entries $)
+                      (map schema-entry->form-params $))]
+    (as-> schemas-col $
+      (map form-params->input $)
+      (create-record-selector-form $ :value val)))
   :rcf)

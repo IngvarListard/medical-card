@@ -2,7 +2,8 @@
   (:require [honey.sql :as sql]
             [malli.core :as m]
             [medical-card.schemas.core-schemas :refer [Research]]
-            [medical-card.schemas.utils :refer [strict-web-form-transformer]]))
+            [medical-card.schemas.utils :refer [strict-web-form-transformer]]
+            [next.jdbc :as jdbc]))
 
 
 (defn create
@@ -14,6 +15,14 @@
            :columns cols
            :values (map vals data)}
           (sql/format {:pretty true})))))
+
+
+(defn enrich-choices!
+  [db sql-map transform]
+
+  (->> sql-map
+       (jdbc/execute! db)
+       (map transform)))
 
 
 (comment
