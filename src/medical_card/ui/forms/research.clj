@@ -19,9 +19,11 @@
   ([form] (schema-entry->forms-params form nil))
   ([form enrich-choices]
    (let [enrich-choices* (if enrich-choices
-                           (fn [[_ e _ :as entry]]
-                             (if-let [ech (:enrich-choices e)]
-                               (enrich-choices (:hsql ech) (:transform ech))
+                           (fn [[field props schema :as entry]]
+                             (if-let [ech (:enrich-choices props)]
+                               (->> (enrich-choices (:hsql ech) (:transform ech))
+                                    (assoc props :choices)
+                                    (#(identity [field % schema])))
                                entry))
                            identity)]
      (as-> form $

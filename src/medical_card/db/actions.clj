@@ -3,7 +3,8 @@
             [malli.core :as m]
             [medical-card.schemas.core-schemas :refer [Research]]
             [medical-card.schemas.utils :refer [strict-web-form-transformer]]
-            [next.jdbc :as jdbc]))
+            [next.jdbc :as jdbc]
+            [honey.sql :as h]))
 
 
 (defn create
@@ -21,6 +22,7 @@
   [db sql-map transform]
 
   (->> sql-map
+       h/format
        (jdbc/execute! db)
        (map transform)))
 

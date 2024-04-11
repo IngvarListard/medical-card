@@ -22,9 +22,7 @@
        {:enrich-choices {:hsql (-> (select :id :name)
                                    (from (table Event)))
                          :transform (fn [query-result]
-                                      (map
-                                       (fn [e] {(str (:events/id e)) (:events/name e)})
-                                       query-result))}})))
+                                      {(str (:events/id query-result)) (:events/name query-result)})}})))
 
 
 
