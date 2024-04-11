@@ -24,7 +24,8 @@
   (->> sql-map
        h/format
        (jdbc/execute! db)
-       (map transform)))
+       (map transform)
+       (into {})))
 
 
 (comment

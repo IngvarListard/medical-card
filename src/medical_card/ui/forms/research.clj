@@ -42,17 +42,3 @@
      (as-> schemas-col* $
        (map form-params->input $)
        (create-record-selector-form $ :value form)))))
-
-
-(comment
-  (research-form)
-
-  (let [schemas-col (as-> "research" $
-                      (keyword $)
-                      (get form->schema $)
-                      (get-top-level-entries $)
-                      (map schema-entry->form-params $))]
-    (as-> schemas-col $
-      (map form-params->input $)
-      (create-record-selector-form $ :value val)))
-  :rcf)
