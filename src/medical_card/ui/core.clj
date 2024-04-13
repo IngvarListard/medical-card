@@ -1,6 +1,7 @@
 (ns medical-card.ui.core
   (:require [rum.core :as r]
-            [squint.compiler :as squint]))
+            [squint.compiler :as squint]
+            [cheshire.core :as json]))
 
 
 (defn head []
@@ -14,7 +15,16 @@
      :rel "stylesheet",
      :type "text/css"}]
    [:script {:src "https://cdn.tailwindcss.com"}]
-   [:script {:src "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" :defer ""}]])
+   [:script {:src "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" :defer "true"}]
+   [:script {:type "importmap"
+             :dangerouslySetInnerHTML
+             {:__html
+              (json/generate-string
+               {:imports
+                {"squint-cljs/src/squint/core.js" "https://cdn.jsdelivr.net/npm/squint-cljs@0.4.81/src/squint/core.js"}})}}]
+   [:script {:type "module"
+             :dangerouslySetInnerHTML {:__html
+                                       "globalThis.squint_core = await import('squint-cljs/src/squint/core.js');"}}]])
 
 
 (defn body [content]
@@ -45,4 +55,5 @@
   (->js '(let [elt (js/document.getElementById "counter")
                val (-> (.-innerText elt) parse-long)]
            (set! elt -innerText (inc val))))
+
   :rcf)

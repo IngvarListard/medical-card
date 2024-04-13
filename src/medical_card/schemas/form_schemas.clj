@@ -15,14 +15,20 @@
   (-> Event
       (mu/dissoc :event_type_id)
       (mu/assoc :parent_id [:maybe :string])
-      (mu/assoc :research_id [:maybe :string])
-      (mu/dissoc :updated_at)
       (update-entry-prop
        :parent_id
        {:enrich-choices {:hsql (-> (select :id :name)
                                    (from (table Event)))
                          :transform (fn [query-result]
-                                      {(str (:events/id query-result)) (:events/name query-result)})}})))
+                                      {(str (:events/id query-result)) (:events/name query-result)})}})
+      (mu/assoc :research_id [:maybe :string])
+      (update-entry-prop
+       :research_id
+       {:enrich-choices {:hsql (-> (select :id :name)
+                                   (from (table Research)))
+                         :transform (fn [query-result]
+                                      {(str (:researches/id query-result)) (:researches/name query-result)})}})
+      (mu/dissoc :updated_at)))
 
 
 
@@ -30,6 +36,12 @@
   (-> Document
       (mu/assoc :user_id [:maybe :string])
       (mu/assoc :event_id [:maybe :string])
+      (update-entry-prop
+       :event_id
+       {:enrich-choices {:hsql (-> (select :id :name)
+                                   (from (table Event)))
+                         :transform (fn [query-result]
+                                      {(str (:events/id query-result)) (:events/name query-result)})}})
       (mu/assoc :doctor_id [:maybe :string])
       ;; (mu/assoc :report_date [:maybe :string])
       (mu/dissoc :report_date)

@@ -34,12 +34,6 @@
 
 
 (def Research
-  "Исследование
-  - routine_health_check - плановая проверка
-  - unscheduled_health_check - внеплановая проверка
-  - disease - недуг
-  - other
- "
   [:map {:display-name "Исследование" :dbtable researches}
    [:name {:display-name "Название"} [:string {:min 3 :max 200}]]
    [:description {:display-name "Описание"} [:string {:min 0 :max 2000}]]
@@ -49,11 +43,6 @@
    [:start_date {:optional true :display-name "Дата начала"}
     [:maybe [inst?]]]])
 
-(comment
-  (concat [:enum] ["a" "b" "c"])
-  (m/form Research)
-  :rcf)
-
 
 (def event-choices
   {"doctor_visit" "Визит к врачу"
@@ -61,9 +50,6 @@
 
 
 (def Event
-  "Событие
-    doctor_visit - прием врача
-    taking_tests - сдача анализов"
   [:map {:display-name "Событие" :dbtable events}
    [:id {:optional true} [:maybe int?]]
    [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
@@ -75,10 +61,11 @@
    [:parent_id
     {:optional true
      :display-name "Предшествующее событие"
-     :ref {:for Event :to :id}}
+     :db {:ref {:for Event :to :id}}}
     [:maybe int?]]
    [:research_id {:optional true :display-name "Исследование"} [:maybe int?]]
    [:updated_at {:optional true} [:maybe inst?]]])
+
 
 (m/form Event)
 (def document-choices

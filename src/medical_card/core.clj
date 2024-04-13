@@ -11,7 +11,11 @@
             [medical-card.views.ajax :as ajax-views]
             [medical-card.views.create-event.submit :refer [create-event!]]
             [ring.util.codec :refer [form-decode]]
-            [clojure.walk :refer [keywordize-keys]])
+            [clojure.walk :refer [keywordize-keys]]
+            ;; [medical-card.ui.components.calendar :refer [calendar]]
+            [medical-card.ui.test-alpine :refer [test-alpine]]
+            [medical-card.ui.core :refer [page]]
+            [hiccup2.core :as h])
   (:gen-class))
 
 
@@ -27,6 +31,8 @@
                   keywordize-keys
                   :select-object
                   ajax-views/get-record-form-view)))
+  ;; (c/GET "/calendar" [] (r/response (rum/render-static-markup (page (calendar)))))
+  (c/GET "/test-alpine" [] (r/response (rum/render-static-markup (page (test-alpine)))))
   (route/resources "/")
   (route/not-found "Not Found"))
 
