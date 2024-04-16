@@ -1,26 +1,24 @@
 (ns medical-card.core
-  (:require [rum.core :as rum]
+  (:require [clojure.walk :refer [keywordize-keys]]
             [compojure.core :as c]
             [compojure.route :as route]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [ring.util.response :as r]
-            [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.json :refer [wrap-json-response]]
-            [medical-card.views.index-page :refer [medical-history-view]]
+            [medical-card.ui.core :refer [page]]
+            [medical-card.ui.test-alpine :refer [calendar test-alpine]]
             [medical-card.views.ajax :as ajax-views]
             [medical-card.views.create-event.submit :refer [create-event!]]
+            [medical-card.views.index-page :refer [medical-history-view]]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.reload :refer [wrap-reload]]
             [ring.util.codec :refer [form-decode]]
-            [clojure.walk :refer [keywordize-keys]]
-            ;; [medical-card.ui.components.calendar :refer [calendar]]
-            [medical-card.ui.test-alpine :refer [test-alpine]]
-            [medical-card.ui.core :refer [page]]
-            [hiccup2.core :as h])
+            [ring.util.response :as r]
+            [rum.core :as rum])
   (:gen-class))
 
 
 (c/defroutes app-routes
-  (c/GET "/" [] (r/response (rum/render-html (medical-history-view))))
+  (c/GET "/" [] (r/response (rum/render-static-markup (medical-history-view))))
   (c/GET "/api/forms/create-event" [] (ajax-views/get-create-event-view))
   (c/POST "/api/forms/create-event" [] (fn [{:keys [form-params] :as _request}]
                                          (create-event! form-params)))
@@ -31,10 +29,11 @@
                   keywordize-keys
                   :select-object
                   ajax-views/get-record-form-view)))
-  ;; (c/GET "/calendar" [] (r/response (rum/render-static-markup (page (calendar)))))
+  (c/GET "/calendar" [] (r/response (calendar)))
   (c/GET "/test-alpine" [] (r/response (rum/render-static-markup (page (test-alpine)))))
   (route/resources "/")
   (route/not-found "Not Found"))
+
 
 (defn -main
   [& _]
