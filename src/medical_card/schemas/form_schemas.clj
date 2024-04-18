@@ -14,7 +14,11 @@
 (def EventFormSchema
   (-> Event
       (mu/dissoc :event_type_id)
+      (mu/dissoc :id)
       (mu/assoc :parent_id [:maybe :string])
+      (update-entry-prop
+       :description
+       {:input-type :textarea})
       (update-entry-prop
        :parent_id
        {:enrich-choices {:hsql (-> (select :id :name)
@@ -30,7 +34,10 @@
                                       {(str (:researches/id query-result)) (:researches/name query-result)})}})
       (mu/dissoc :updated_at)))
 
-
+(comment
+(require '[malli.core :as m])
+  (m/form EventFormSchema)
+  :rcf)
 
 (def DocumentFormSchema
   (-> Document

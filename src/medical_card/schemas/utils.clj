@@ -47,12 +47,14 @@
   ([entry]
    (let [[entry-name opts schema] entry
          choices (:choices opts)
-         typ (loop [s schema
-                    t (m/type schema)]  ;; get end-type of linear schema
-               (cond
-                 (not (some #{t} [:maybe])) t
-                 :else (recur
-                        (mu/get s 0) (m/type (mu/get s 0)))))]
+         typ (or
+              (:input-type opts)
+              (loop [s schema
+                     t (m/type schema)]  ;; get end-type of linear schema
+                (cond
+                  (not (some #{t} [:maybe])) t
+                  :else (recur
+                         (mu/get s 0) (m/type (mu/get s 0))))))]
      {:name (name entry-name)
       :type typ
       :display-name (:display-name opts)

@@ -53,7 +53,7 @@
   [:map {:display-name "Событие" :dbtable events}
    [:id {:optional true} [:maybe int?]]
    [:name {:display-name "Название события"} [string? {:min 5 :max 200}]]
-   [:description {:display-name "Описание"} [string? {:min 0 :max 2000}]]
+   [:description {:display-name "Описание/Доп. информация"} [string? {:min 0 :max 2000}]]
    [:type
     {:display-name "Тип события" :choices event-choices}
     (into [:enum] (keys event-choices))]
@@ -70,7 +70,8 @@
 (m/form Event)
 (def document-choices
   {"doctor_opinion" "Заключение врача"
-   "tests_result" "Результаты анализов"})
+   "tests_result" "Результаты анализов"
+   "symptoms" "Симптомы"})
 
 
 (def Document

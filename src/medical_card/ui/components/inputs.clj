@@ -32,6 +32,7 @@
            {:value default-value}))]
        (map (fn [[k v]] [:option {:value k} v]) choices))]]))
 
+
 (comment
   (form-params->input
    {:type :enum :name "foo"
@@ -63,10 +64,27 @@
         [:datalist {:id (str name "-list")}]
         (map #(identity [:option %]) (vals choices))))]))
 
-(comment
-  (into)
 
-  :rcf)
+(defmethod form-params->input :textarea
+  textarea-input
+  [schema-params & _]
+  (let [{:keys [name default-value display-name choices]} schema-params]
+    [:label.form-control
+     [:div.label
+      [:span.label-text display-name]]
+     [:textarea.input.input-bordered.w-full.max-w-md.input-sm
+      (merge
+       {:id name
+        :name name
+        :type "textarea"
+        :value default-value}
+       (when choices
+         {:list (str name "-list")}))]
+     (when choices
+       (into
+        [:datalist {:id (str name "-list")}]
+        (map #(identity [:option %]) (vals choices))))]))
+
 
 (defmethod form-params->input :date
   date-input

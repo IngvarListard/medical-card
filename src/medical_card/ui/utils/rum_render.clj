@@ -7,7 +7,6 @@
 
 
 (defn render-attr-str! [sb attr value & {:keys [unsafe]}]
-  (println "unsafe" unsafe "unsafe-attrs" *unsafe-attrs*)
   (let [attr-str (-> value sr/to-str (#(if unsafe % (sr/escape-html %))))]
     (sr/append! sb " " attr "=\"" attr-str "\"")))
 
@@ -40,3 +39,30 @@
   (binding [*unsafe-attrs* unsafe-attrs]
     (with-redefs [sr/render-attr! render-attr!]
       (r/render-static-markup element))))
+
+
+(comment
+  
+  (defn sqr [n]
+    (* n n))
+
+  (defmulti asdf (fn [_ x] x))
+
+  (defmethod asdf 1 [_ x]
+    (println "one"))
+
+  (defmethod asdf 2 [_ x]
+    (println "two"))
+
+  (defmethod asdf 3 [f x]
+    (println "default")
+    (f x))
+
+  (alter-var-root
+   (var sqr)                  ; var to alter
+   (fn [f]                    ; fn to apply to the var's value
+     (fn [n]                  ; returns a new fn wrapping old fn
+       (asdf f n))))
+
+  (sqr 3)
+  :rcf)

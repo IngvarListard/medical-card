@@ -3,7 +3,7 @@
             [compojure.core :as c]
             [compojure.route :as route]
             [medical-card.ui.core :refer [page]]
-            [medical-card.ui.test-alpine :refer [calendar test-alpine]]
+            [medical-card.ui.test-alpine :refer [calendar]]
             [medical-card.views.ajax :as ajax-views]
             [medical-card.views.create-event.submit :refer [create-event!]]
             [medical-card.views.index-page :refer [medical-history-view]]
@@ -30,7 +30,6 @@
                   :select-object
                   ajax-views/get-record-form-view)))
   (c/GET "/calendar" [] (r/response (calendar)))
-  (c/GET "/test-alpine" [] (r/response (rum/render-static-markup (page (test-alpine)))))
   (route/resources "/")
   (route/not-found "Not Found"))
 

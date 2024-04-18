@@ -1,6 +1,7 @@
 (ns medical-card.ui.test-alpine
   (:require [medical-card.ui.core :refer [->js page]]
-            [medical-card.ui.utils.rum-render :refer [render-static-markup-unsafe]]))
+            [medical-card.ui.utils.rum-render :refer [render-static-markup-unsafe]]
+            [clojure.repl :refer [source source-fn]]))
 
 
 (defn arrow-btn
@@ -219,8 +220,22 @@
        :unsafe-attrs #{"@click" "x-class" "disabled" ":class" "x-for" "x-on:click"})))
 
 
+(defn ns-squint
+  [& args]
+  (into (list) (reverse args)))
+
+
 (comment
+  (source ns-squint)
   (render-static-markup-unsafe
    [:div {"@click" "''{}<>" :x-class "''{}<>" :disabled "''{}<>" ":class" "''{}<>"}]
    :unsafe-attrs #{"@click" "x-class" "disabled" ":class"})
+  (def a '(fn [x y] (* x y)))
+  (->js (read-string (source-fn 'medical-card.ui.utils.rum-render/render-attr!)))
+  (->js (ns-squint
+         'do
+         '(defn asdf [x] x)
+         '(fn [d] d)
+         a))
+
   :rcf)
